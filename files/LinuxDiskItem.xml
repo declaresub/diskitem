@@ -1,0 +1,417 @@
+<?xml version="1.0"?>
+<RBProject version="2008r4.1">
+<block type="Module" ID="2093105109">
+ <ObjName>LinuxDiskItem</ObjName>
+ <ObjContainerID>1044228147</ObjContainerID>
+ <IsClass>1</IsClass>
+ <Superclass>DiskItem</Superclass>
+ <ItemFlags>1</ItemFlags>
+ <IsInterface>0</IsInterface>
+ <Compatibility></Compatibility>
+ <HookInstance>
+  <ItemName>GetAbsolutePath</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function GetAbsolutePath() As String</SourceLine>
+   <SourceLine>return me.Path</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+ </HookInstance>
+ <HookInstance>
+  <ItemName>CreateDirectory</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub CreateDirectory()</SourceLine>
+   <SourceLine>'int mkdir(const char *path, mode_t mode);</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>#if targetLinux</SourceLine>
+   <SourceLine>soft declare function mkdir lib libc (path as CString, mode as Integer) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+ </HookInstance>
+ <HookInstance>
+  <ItemName>GetModificationDate</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function GetModificationDate() As Date</SourceLine>
+   <SourceLine>return me.mtime</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+ </HookInstance>
+ <Method>
+  <ItemName>CreateFromSlashPath</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine> Shared Function CreateFromSlashPath(path as String) As DiskItem</SourceLine>
+   <SourceLine>dim d as new LinuxDiskItem</SourceLine>
+   <SourceLine>d.Path = path</SourceLine>
+   <SourceLine>return d</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>1</Shared>
+  <ItemParams>path as String</ItemParams>
+  <ItemResult>DiskItem</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>Constructor</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub Constructor()</SourceLine>
+   <SourceLine>//prevents creation via new outside class</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>stat</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function stat() As MemoryBlock</SourceLine>
+   <SourceLine>#if targetLinux</SourceLine>
+   <SourceLine>soft declare function xstat lib libc alias "__xstat64" (ver as Int16, path as CString, s as Ptr) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim s as new MemoryBlock(statLinux.Size)</SourceLine>
+   <SourceLine>const STAT_VER_LINUX = 3</SourceLine>
+   <SourceLine>'print "calling xstat"</SourceLine>
+   <SourceLine>dim result as Integer = xstat(STAT_VER_LINUX, me.AbsolutePath, s)</SourceLine>
+   <SourceLine>if result = 0 then</SourceLine>
+   <SourceLine>return s</SourceLine>
+   <SourceLine>else</SourceLine>
+   <SourceLine>dim errorCode as Integer = libcErrorCode</SourceLine>
+   <SourceLine>dim errorMsg as String = libcErrorMessage(errorCode)</SourceLine>
+   <SourceLine>raise new OSError(errorCode, errorMsg, "stat", "__xstat64")</SourceLine>
+   <SourceLine>'print "stat succeeded."</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>'print "dev = " + Str(s.st_dev)</SourceLine>
+   <SourceLine>''print "pad = " + Str(s.pad1)</SourceLine>
+   <SourceLine>'print "inode = " + Str(s.st_ino)</SourceLine>
+   <SourceLine>'print "mode = " + Str(s.st_mode)</SourceLine>
+   <SourceLine>'print "nlink = " + Str(s.st_nlink)</SourceLine>
+   <SourceLine>'print "uid = " + Str(s.st_uid)</SourceLine>
+   <SourceLine>'print "gid = " + Str(s.st_gid)</SourceLine>
+   <SourceLine>'print "rdev = " + Str(s.st_rdev)</SourceLine>
+   <SourceLine>'print "size = " + Str(s.st_size)</SourceLine>
+   <SourceLine>'print "blksize = " + Str(s.st_blksize)</SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'print "mtime = " + Str(s.st_mtime)</SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'print "hex struct data:"</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>'dim structData() as String = SplitB(s.StringValue(true), "")</SourceLine>
+   <SourceLine>'dim hexData as String</SourceLine>
+   <SourceLine>'for i as Integer = 0 to UBound(structData)</SourceLine>
+   <SourceLine>'if AscB(structData(i)) &lt; 16 then</SourceLine>
+   <SourceLine>'hexData = HexData + "0"</SourceLine>
+   <SourceLine>'end if</SourceLine>
+   <SourceLine>'hexData = HexData + Hex(AscB(structData(i)))</SourceLine>
+   <SourceLine>'next</SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'print hexData</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult>MemoryBlock</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>libcErrorCode</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Shared Function libcErrorCode() As Integer</SourceLine>
+   <SourceLine>#if TargetLinux</SourceLine>
+   <SourceLine>soft declare function libcErrorCode lib libc alias "__errno_location" () as Ptr</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim m as MemoryBlock = libcErrorCode()</SourceLine>
+   <SourceLine>if m is nil then</SourceLine>
+   <SourceLine>//something bad has happened</SourceLine>
+   <SourceLine>return -1</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>return m.Long(0)</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <Shared>1</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult>Integer</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>libcErrorMessage</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Shared Function libcErrorMessage(code as Integer) As String</SourceLine>
+   <SourceLine>#if targetLinux</SourceLine>
+   <SourceLine>soft declare function strerror Lib libc (errcode as Integer)  as Ptr</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim errorMsg as MemoryBlock = strerror(code)</SourceLine>
+   <SourceLine>if errorMsg &lt;&gt; nil then</SourceLine>
+   <SourceLine>return DefineEncoding(errorMsg.CString(0), Encodings.SystemDefault)</SourceLine>
+   <SourceLine>else</SourceLine>
+   <SourceLine>//something bad has happened</SourceLine>
+   <SourceLine>return ""</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <Shared>1</Shared>
+  <ItemParams>code as Integer</ItemParams>
+  <ItemResult>String</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>mtime</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function mtime() As Date</SourceLine>
+   <SourceLine>#if targetLinux</SourceLine>
+   <SourceLine>dim m as MemoryBlock = stat()</SourceLine>
+   <SourceLine>dim p as Ptr = m</SourceLine>
+   <SourceLine>dim s as statLinux = p.statLinux</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim d as new Date</SourceLine>
+   <SourceLine>d.TotalSeconds = LinuxEpoch.TotalSeconds + CType(s.st_mtime.tv_sec, Double)</SourceLine>
+   <SourceLine>return d</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult>Date</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>LinuxEpoch</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function LinuxEpoch() As Date</SourceLine>
+   <SourceLine>dim d as new Date</SourceLine>
+   <SourceLine>d.Year = 1970</SourceLine>
+   <SourceLine>d.Month = 1</SourceLine>
+   <SourceLine>d.Day = 1</SourceLine>
+   <SourceLine>d.Hour = 0</SourceLine>
+   <SourceLine>d.Minute = 0</SourceLine>
+   <SourceLine>d.Day = 0</SourceLine>
+   <SourceLine>d.GMTOffset = 0.0</SourceLine>
+   <SourceLine>return d</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult>Date</ItemResult>
+ </Method>
+ <Property>
+  <ItemName>Path</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Path As String</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>Path As String</ItemDeclaration>
+  <ItemFlags>33</ItemFlags>
+  <Shared>0</Shared>
+ </Property>
+ <ViewBehavior>
+  <ViewProperty>
+   <ObjName>Alias</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Boolean</ItemType>
+   <InheritsFrom>DiskItem</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Name</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <InheritsFrom>Object</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Index</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <PropertyValue>2147483648</PropertyValue>
+   <InheritsFrom>Object</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Super</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <InheritsFrom>Object</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Left</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <InheritsFrom>Object</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Top</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <InheritsFrom>Object</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Exists</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Boolean</ItemType>
+   <InheritsFrom>DiskItem</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>URLPath</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <ItemType>String</ItemType>
+   <EditorType>MultiLineEditor</EditorType>
+   <InheritsFrom>DiskItem</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Directory</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Boolean</ItemType>
+   <InheritsFrom>DiskItem</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>POSIXPath</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <ItemType>String</ItemType>
+   <EditorType>MultiLineEditor</EditorType>
+   <InheritsFrom>DiskItem</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>AbsolutePath</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <ItemType>String</ItemType>
+   <EditorType>MultiLineEditor</EditorType>
+   <InheritsFrom>DiskItem</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Visible</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Boolean</ItemType>
+   <InheritsFrom>DiskItem</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>LastErrorCode</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+   <InheritsFrom>DiskItem</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Count</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+   <InheritsFrom>DiskItem</InheritsFrom>
+  </ViewProperty>
+ </ViewBehavior>
+ <Constant>
+  <ItemName>libc</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>libc</ItemName>
+  <ItemType>0</ItemType>
+  <ItemDef>/usr/lib/libc.so</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
+ <Structure>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>statLinux</ItemName>
+  <ItemFlags>0</ItemFlags>
+  <ItemName>statLinux</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>st_dev as UInt64</SourceLine>
+   <SourceLine>pad1 as UInt32</SourceLine>
+   <SourceLine>st_ino as UInt32</SourceLine>
+   <SourceLine>st_mode as UInt32</SourceLine>
+   <SourceLine>st_nlink as Uint32</SourceLine>
+   <SourceLine>st_uid as UInt32</SourceLine>
+   <SourceLine>st_gid as UInt32</SourceLine>
+   <SourceLine>st_rdev as UInt64</SourceLine>
+   <SourceLine>pad2 as UInt32</SourceLine>
+   <SourceLine>st_size as UInt64</SourceLine>
+   <SourceLine>st_blksize as  UInt32</SourceLine>
+   <SourceLine>st_blocks as UInt64</SourceLine>
+   <SourceLine>st_atime as timespec_Linux</SourceLine>
+   <SourceLine>st_mtime as timespec_Linux</SourceLine>
+   <SourceLine>st_ctime as timespec_Linux</SourceLine>
+   <SourceLine>st_ino64 as Uint64</SourceLine>
+  </ItemSource>
+ </Structure>
+ <Structure>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>timespec_Linux</ItemName>
+  <ItemFlags>0</ItemFlags>
+  <ItemName>timespec_Linux</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>tv_sec as Int32</SourceLine>
+   <SourceLine>tv_nsec as Int32</SourceLine>
+  </ItemSource>
+ </Structure>
+</block>
+</RBProject>

@@ -1,0 +1,497 @@
+<?xml version="1.0"?>
+<RBProject version="2008r4.1">
+<block type="Module" ID="1135628416">
+ <ObjName>DataStream</ObjName>
+ <ObjContainerID>1044228147</ObjContainerID>
+ <IsClass>1</IsClass>
+ <ItemFlags>1</ItemFlags>
+ <IsInterface>0</IsInterface>
+ <Compatibility></Compatibility>
+ <Method>
+  <ItemName>Constructor</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub Constructor(theForkRefNum as Integer)</SourceLine>
+   <SourceLine>me.ForkRefNum = theForkRefNum</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>theForkRefNum as Integer</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>Destructor</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub Destructor()</SourceLine>
+   <SourceLine>if me.ForkRefNum = 0 then</SourceLine>
+   <SourceLine>return</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
+   <SourceLine>soft declare function FSCloseFork lib CarbonFramework (forkRefNum as Integer) as Int16</SourceLine>
+   <SourceLine>pLastErrorCode = FSCloseFork(me.ForkRefNum)</SourceLine>
+   <SourceLine>if pLastErrorCode &lt;&gt; 0 then</SourceLine>
+   <SourceLine>break</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>me.ForkRefNum = 0</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>Write</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub Write(data as String)</SourceLine>
+   <SourceLine>if me.ForkRefNum = 0 then</SourceLine>
+   <SourceLine>return</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
+   <SourceLine>soft declare function FSWriteFork lib CarbonFramework (forkRefNum as Integer, positionMode as UInt16, positionOffset as Int64, requestCount as UInt32, buffer as CString, ByRef actualCount as UInt32) as Int16</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>const fsAtMark = 0</SourceLine>
+   <SourceLine>dim actualCount as UInt32</SourceLine>
+   <SourceLine>me.pLastErrorCode = FSWriteFork(me.ForkRefNum, fsAtMark, 0, LenB(data), data, actualCount)</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>data as String</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>WriteInt32</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub WriteInt32(data as Int32)</SourceLine>
+   <SourceLine>if me.ForkRefNum = 0 then</SourceLine>
+   <SourceLine>return</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
+   <SourceLine>soft declare function FSWriteFork lib CarbonFramework (forkRefNum as Integer, positionMode as UInt16, positionOffset as Int64, requestCount as UInt32, ByRef buffer as Int32, ByRef actualCount as UInt32) as Int16</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>const fsAtMark = 0</SourceLine>
+   <SourceLine>dim actualCount as UInt32</SourceLine>
+   <SourceLine>me.pLastErrorCode = FSWriteFork(me.ForkRefNum, fsAtMark, 0, 4, data, actualCount)</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>'OSErr FSWriteFork (</SourceLine>
+   <SourceLine>'FSIORefNum forkRefNum,</SourceLine>
+   <SourceLine>'UInt16 positionMode,</SourceLine>
+   <SourceLine>'SInt64 positionOffset,</SourceLine>
+   <SourceLine>'ByteCount requestCount,</SourceLine>
+   <SourceLine>'const void *buffer,</SourceLine>
+   <SourceLine>'ByteCount *actualCount</SourceLine>
+   <SourceLine>');</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>data as Int32</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>WriteInt64</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub WriteInt64(value as Int64)</SourceLine>
+   <SourceLine>if me.ForkRefNum = 0 then</SourceLine>
+   <SourceLine>return</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
+   <SourceLine>soft declare function FSWriteFork lib CarbonFramework (forkRefNum as Integer, positionMode as UInt16, positionOffset as Int64, requestCount as UInt32, ByRef buffer as Int64, ByRef actualCount as UInt32) as Int16</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>const fsAtMark = 0</SourceLine>
+   <SourceLine>dim actualCount as UInt32</SourceLine>
+   <SourceLine>me.pLastErrorCode = FSWriteFork(me.ForkRefNum, fsAtMark, 0, 8, value, actualCount)</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>'OSErr FSWriteFork (</SourceLine>
+   <SourceLine>'FSIORefNum forkRefNum,</SourceLine>
+   <SourceLine>'UInt16 positionMode,</SourceLine>
+   <SourceLine>'SInt64 positionOffset,</SourceLine>
+   <SourceLine>'ByteCount requestCount,</SourceLine>
+   <SourceLine>'const void *buffer,</SourceLine>
+   <SourceLine>'ByteCount *actualCount</SourceLine>
+   <SourceLine>');</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>'Position Mode Constants</SourceLine>
+   <SourceLine>'Together with an offset, specify a position within a fork.</SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'enum {</SourceLine>
+   <SourceLine>'fsAtMark = 0,</SourceLine>
+   <SourceLine>'fsFromStart = 1,</SourceLine>
+   <SourceLine>'fsFromLEOF = 2,</SourceLine>
+   <SourceLine>'fsFromMark = 3</SourceLine>
+   <SourceLine>'};</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>value as Int64</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>Read</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function Read(count as Int32) As String</SourceLine>
+   <SourceLine>if me.ForkRefNum = 0 then</SourceLine>
+   <SourceLine>return ""</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
+   <SourceLine>soft declare function FSReadFork lib CarbonFramework (forkRefNum as Integer, positionMode as UInt16, positionOffset as Int64, requestCount as UInt32, buffer as Ptr, ByRef actualCount as UInt32) as Int16</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>const fsAtMark = 0</SourceLine>
+   <SourceLine>dim buffer as new MemoryBlock(count)</SourceLine>
+   <SourceLine>dim actualCount as UInt32</SourceLine>
+   <SourceLine>me.pLastErrorCode = FSReadFork(me.ForkRefNum, fsAtMark, 0, count, buffer, actualCount)</SourceLine>
+   <SourceLine>if actualCount = count then</SourceLine>
+   <SourceLine>return buffer</SourceLine>
+   <SourceLine>else</SourceLine>
+   <SourceLine>return buffer.LeftB(actualCount)</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>count as Int32</ItemParams>
+  <ItemResult>String</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>ShiftPosition</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub ShiftPosition(value as Int64)</SourceLine>
+   <SourceLine>if me.ForkRefNum = 0 then</SourceLine>
+   <SourceLine>return</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
+   <SourceLine>soft declare function FSSetForkPosition lib CarbonFramework (forkRefNum as Integer, positionMode as UInt16, positionOffset as Int64) as Int16</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>me.pLastErrorCode = FSSetForkPosition(me.ForkRefNum, fsFromMark, value)</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>value as Int64</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>ReadInt64</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function ReadInt64() As Int64</SourceLine>
+   <SourceLine>if me.ForkRefNum = 0 then</SourceLine>
+   <SourceLine>return 0</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
+   <SourceLine>soft declare function FSReadFork lib CarbonFramework (forkRefNum as Integer, positionMode as UInt16, positionOffset as Int64, requestCount as UInt32, ByRef buffer as Int64, ByRef actualCount as UInt32) as Int16</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>const fsAtMark = 0</SourceLine>
+   <SourceLine>dim buffer as Int64</SourceLine>
+   <SourceLine>dim actualCount as UInt32</SourceLine>
+   <SourceLine>me.pLastErrorCode = FSReadFork(me.ForkRefNum, fsAtMark, 0, 8, buffer, actualCount)</SourceLine>
+   <SourceLine>return buffer</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult>Int64</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>Open</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine> Shared Sub Open(f as FolderItem)</SourceLine>
+   <SourceLine>'dim forkRefNum as Integer = me.OpenFork(me.DataForkName)</SourceLine>
+   <SourceLine>'if forkRefNum = 0 then</SourceLine>
+   <SourceLine>'return nil</SourceLine>
+   <SourceLine>'end if</SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'return new DataStream(forkRefNum)</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>1</Shared>
+  <ItemParams>f as FolderItem</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Note>
+  <ItemName>Untitled</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <NoteLine>Untitled</NoteLine>
+   <NoteLine>Position Mode Constants</NoteLine>
+   <NoteLine>Together with an offset, specify a position within a fork.</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>enum {</NoteLine>
+   <NoteLine>fsAtMark = 0,</NoteLine>
+   <NoteLine>fsFromStart = 1,</NoteLine>
+   <NoteLine>fsFromLEOF = 2,</NoteLine>
+   <NoteLine>fsFromMark = 3</NoteLine>
+   <NoteLine>};</NoteLine>
+  </ItemSource>
+  <ItemFlags>0</ItemFlags>
+ </Note>
+ <Property>
+  <ItemName>ForkRefNum</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>ForkRefNum As Integer</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>ForkRefNum As Integer</ItemDeclaration>
+  <ItemFlags>33</ItemFlags>
+  <Shared>0</Shared>
+ </Property>
+ <Property>
+  <ItemName>pLastErrorCode</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>pLastErrorCode As Integer</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>pLastErrorCode As Integer</ItemDeclaration>
+  <ItemFlags>33</ItemFlags>
+  <Shared>0</Shared>
+ </Property>
+ <Property>
+  <ItemName>Position</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Position As Int64</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>Position As Int64</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <SetAccessor>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Set</SourceLine>
+   <SourceLine>if me.ForkRefNum = 0 then</SourceLine>
+   <SourceLine>return</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
+   <SourceLine>soft declare function FSSetForkPosition lib CarbonFramework (forkRefNum as Integer, positionMode as UInt16, positionOffset as Int64) as Int16</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>me.pLastErrorCode = FSSetForkPosition(me.ForkRefNum, fsFromStart, value)</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Set</SourceLine>
+  </SetAccessor>
+  <GetAccessor>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Get</SourceLine>
+   <SourceLine>if me.ForkRefNum = 0 then</SourceLine>
+   <SourceLine>return 0</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
+   <SourceLine>soft declare function FSGetForkPosition lib CarbonFramework (forkRefNum as Integer, ByRef position as Int64) as Int16</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim thePosition as Int64</SourceLine>
+   <SourceLine>me.pLastErrorCode = FSGetForkPosition(me.ForkRefNum, thePosition)</SourceLine>
+   <SourceLine>return thePosition</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine>End Get</SourceLine>
+  </GetAccessor>
+ </Property>
+ <Property>
+  <ItemName>Length</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Length As Int64</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>Length As Int64</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <SetAccessor>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Set</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Set</SourceLine>
+  </SetAccessor>
+  <GetAccessor>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Get</SourceLine>
+   <SourceLine>if me.ForkRefNum = 0 then</SourceLine>
+   <SourceLine>return 0</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
+   <SourceLine>soft declare function FSGetForkSize lib CarbonFramework (forkRefNum as Integer, ByRef forkSize as Int64) as Int16</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim forkSize as Int64</SourceLine>
+   <SourceLine>me.pLastErrorCode = FSGetForkSize(me.ForkRefNum, forkSize)</SourceLine>
+   <SourceLine>return forkSize</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine>End Get</SourceLine>
+  </GetAccessor>
+ </Property>
+ <ViewBehavior>
+  <ViewProperty>
+   <ObjName>Name</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <InheritsFrom>Object</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Index</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <PropertyValue>2147483648</PropertyValue>
+   <InheritsFrom>Object</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Super</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <InheritsFrom>Object</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Left</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <InheritsFrom>Object</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Top</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <InheritsFrom>Object</InheritsFrom>
+  </ViewProperty>
+ </ViewBehavior>
+ <Constant>
+  <ItemName>CarbonFramework</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>CarbonFramework</ItemName>
+  <ItemType>0</ItemType>
+  <ItemDef>Carbon.framework</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>fsFromMark</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>fsFromMark</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>3</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>fsFromStart</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>fsFromStart</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>1</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>fsAtMark</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>fsAtMark</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>0</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>fsFromLEOF</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>fsFromLEOF</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>2</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
+</block>
+</RBProject>

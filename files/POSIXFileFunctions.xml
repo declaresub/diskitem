@@ -1,0 +1,181 @@
+<?xml version="1.0"?>
+<RBProject version="2008r4.1">
+<block type="Module" ID="1880945459">
+ <ObjName>POSIXFileFunctions</ObjName>
+ <ObjContainerID>0</ObjContainerID>
+ <IsClass>0</IsClass>
+ <ItemFlags>1</ItemFlags>
+ <IsInterface>0</IsInterface>
+ <Compatibility></Compatibility>
+ <Method>
+  <ItemName>unlink</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub unlink(d as DiskItem)</SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
+   <SourceLine>if System.IsFunctionAvailable("FSUnlinkObject", CarbonFramework) then</SourceLine>
+   <SourceLine>soft declare function FSUnlinkObject lib CarbonFramework (ByRef ref as MacOSDiskItem.FSRef) as Int16</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim ref as MacOSDiskItem.FSRef = MacOSDiskItem(d).FSRef</SourceLine>
+   <SourceLine>dim OSErr as Int16 = FSUnlinkObject(ref)</SourceLine>
+   <SourceLine>if OSErr &lt;&gt; 0 then</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>else</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>soft declare function unlink lib libc (path as CString) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim result as Integer = unlink(me.POSIXPath)</SourceLine>
+   <SourceLine>if result &lt;&gt; 0 then</SourceLine>
+   <SourceLine>//raise exception</SourceLine>
+   <SourceLine>'dim errorCode as Integer = libc.ErrorCode</SourceLine>
+   <SourceLine>'dim errorMsg as String = libc.ErrorMessage(errorCode)</SourceLine>
+   <SourceLine>break</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>#if targetLinux</SourceLine>
+   <SourceLine>soft declare function unlink lib libc (path as CString) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim result as Integer = unlink(d.POSIXPath)</SourceLine>
+   <SourceLine>if result &lt;&gt; 0 then</SourceLine>
+   <SourceLine>dim errorCode as Integer = libcErrorCode</SourceLine>
+   <SourceLine>dim errorMsg as String = libcErrorMessage(errorCode)</SourceLine>
+   <SourceLine>raise new OSError(errorCode, errorMsg, "unlink", "unlink")</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>d as DiskItem</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>symlink</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub symlink(source as DiskItem, target as DiskItem)</SourceLine>
+   <SourceLine>#if targetLinux</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>soft declare function symlink lib libc (path1 as CString, path2 as CString) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim result as Integer = symlink(source.POSIXPath, target.POSIXPath)</SourceLine>
+   <SourceLine>if result &lt;&gt; 0 then</SourceLine>
+   <SourceLine>dim errorCode as Integer = libcErrorCode</SourceLine>
+   <SourceLine>dim errorMsg as String = libcErrorMessage(errorCode)</SourceLine>
+   <SourceLine>break</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>source as DiskItem, target as DiskItem</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>link</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub link(source as DiskItem, target as DiskItem)</SourceLine>
+   <SourceLine>#if targetLinux</SourceLine>
+   <SourceLine>soft declare function link lib libc (path1 as CString, path2 as CString) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim result as Integer = link(source.POSIXPath, target.POSIXPath)</SourceLine>
+   <SourceLine>if result &lt;&gt; 0 then</SourceLine>
+   <SourceLine>dim errorCode as Integer = libcErrorCode</SourceLine>
+   <SourceLine>dim errorMsg as String = libcErrorMessage(errorCode)</SourceLine>
+   <SourceLine>break</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>source as DiskItem, target as DiskItem</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <ViewBehavior>
+  <ViewProperty>
+   <ObjName>Name</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <InheritsFrom>Object</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Index</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <PropertyValue>2147483648</PropertyValue>
+   <InheritsFrom>Object</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Super</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <InheritsFrom>Object</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Left</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <InheritsFrom>Object</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Top</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <InheritsFrom>Object</InheritsFrom>
+  </ViewProperty>
+ </ViewBehavior>
+ <Constant>
+  <ItemName>libc</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>libc</ItemName>
+  <ItemType>0</ItemType>
+  <ItemDef></ItemDef>
+  <ItemFlags>33</ItemFlags>
+  <ConstantInstance>
+   <ItemPlatform>5</ItemPlatform>
+   <ItemLanguage>0</ItemLanguage>
+   <ItemDef>/usr/lib/libc.so</ItemDef>
+  </ConstantInstance>
+  <ConstantInstance>
+   <ItemPlatform>1</ItemPlatform>
+   <ItemLanguage>0</ItemLanguage>
+   <ItemDef>System.framework</ItemDef>
+  </ConstantInstance>
+ </Constant>
+ <Constant>
+  <ItemName>CarbonFramework</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>CarbonFramework</ItemName>
+  <ItemType>0</ItemType>
+  <ItemDef>Carbon.framework</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
+</block>
+</RBProject>
