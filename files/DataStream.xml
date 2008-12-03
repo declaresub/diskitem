@@ -280,6 +280,44 @@
   <ItemParams>f as FolderItem</ItemParams>
   <ItemResult></ItemResult>
  </Method>
+ <Method>
+  <ItemName>OpenFork</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function OpenFork(forkName as String) As Integer</SourceLine>
+   <SourceLine>'#if targetMacOS</SourceLine>
+   <SourceLine>'soft declare function FSOpenFork lib CarbonFramework (ByRef ref as FSRef, forkNameLength as UInt32, forkName as CString, permissions as Int8, ByRef forkRefNum as Int16) as Int16</SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'dim myRef as FSRef = me.FSRef</SourceLine>
+   <SourceLine>'dim forkRefNum as Int16</SourceLine>
+   <SourceLine>'me.pLastErrorCode = FSOpenFork(myRef, Len(forkName), ConvertEncoding(forkName, Encodings.UTF16), 0, forkRefNum)</SourceLine>
+   <SourceLine>'return forkRefNum</SourceLine>
+   <SourceLine>'#endif</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>'enum {</SourceLine>
+   <SourceLine>'fsCurPerm = 0x00,</SourceLine>
+   <SourceLine>'fsRdPerm = 0x01,</SourceLine>
+   <SourceLine>'fsWrPerm = 0x02,</SourceLine>
+   <SourceLine>'fsRdWrPerm = 0x03,</SourceLine>
+   <SourceLine>'fsRdWrShPerm = 0x04,</SourceLine>
+   <SourceLine>'fsRdDenyPerm = 0x10,</SourceLine>
+   <SourceLine>'fsWrDenyPerm = 0x20</SourceLine>
+   <SourceLine>'};</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>forkName as String</ItemParams>
+  <ItemResult>Integer</ItemResult>
+ </Method>
  <Note>
   <ItemName>Untitled</ItemName>
   <Compatibility></Compatibility>

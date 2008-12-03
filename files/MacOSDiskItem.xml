@@ -15,20 +15,16 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Function GetName() As String</SourceLine>
-   <SourceLine>#if targetMacOS</SourceLine>
-   <SourceLine>me.pLastErrorCode = 0</SourceLine>
+   <SourceLine>const MethodName = "GetName"</SourceLine>
    <SourceLine></SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
    <SourceLine>soft declare function CFURLGetFSRef lib CarbonFramework (url as Ptr, byRef f as FSRef) as Boolean</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim myRef as FSRef</SourceLine>
    <SourceLine>if CFURLGetFSRef(me.CFURLPtr, myRef) then</SourceLine>
    <SourceLine>soft declare function FSGetCatalogInfo lib CarbonFramework (ByRef ref as FSRef, whichInfo as UInt32, catalogInfo as Ptr, ByRef outName as HFSUniStr255, fsSpec as Ptr, parentRef as Ptr) as Int16</SourceLine>
    <SourceLine>dim nameStr as HFSUniStr255</SourceLine>
-   <SourceLine>me.pLastErrorCode = FSGetCatalogInfo(myRef, 0, nil, nameStr, nil, nil)</SourceLine>
-   <SourceLine>if me.pLastErrorCode &lt;&gt; 0 then</SourceLine>
-   <SourceLine>return ""</SourceLine>
-   <SourceLine>end if</SourceLine>
-   <SourceLine></SourceLine>
+   <SourceLine>Attempt FSGetCatalogInfo(myRef, 0, nil, nameStr, nil, nil), MethodName</SourceLine>
    <SourceLine>return StringValue(nameStr)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>else</SourceLine>
@@ -48,8 +44,6 @@
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Function GetURL() As String</SourceLine>
    <SourceLine>#if targetMacOS</SourceLine>
-   <SourceLine>me.pLastErrorCode = 0</SourceLine>
-   <SourceLine></SourceLine>
    <SourceLine>if me.CFURLPtr = nil then</SourceLine>
    <SourceLine>return ""</SourceLine>
    <SourceLine>end if</SourceLine>
@@ -75,9 +69,9 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Function GetIsDirectory() As Boolean</SourceLine>
-   <SourceLine>#if targetMacOS</SourceLine>
-   <SourceLine>me.pLastErrorCode = 0</SourceLine>
+   <SourceLine>const MethodName = "GetIsDirectory"</SourceLine>
    <SourceLine></SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
    <SourceLine>soft declare function CFURLGetFSRef lib CarbonFramework (url as Ptr, byRef f as FSRef) as Boolean</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim myRef as FSRef</SourceLine>
@@ -85,11 +79,7 @@
    <SourceLine>soft declare function FSGetCatalogInfo lib CarbonFramework (ByRef ref as FSRef, whichInfo as UInt32, ByRef catalogInfo as FSCatalogInfo, outName as Ptr, fsSpec as Ptr, parentRef as Ptr) as Int16</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim catalogInfo as FSCatalogInfo</SourceLine>
-   <SourceLine>me.pLastErrorCode = FSGetCatalogInfo(myRef, kFSCatInfoNodeFlags, catalogInfo, nil, nil, nil)</SourceLine>
-   <SourceLine>if me.pLastErrorCode &lt;&gt; 0 then</SourceLine>
-   <SourceLine>return false</SourceLine>
-   <SourceLine>end if</SourceLine>
-   <SourceLine></SourceLine>
+   <SourceLine>Attempt FSGetCatalogInfo(myRef, kFSCatInfoNodeFlags, catalogInfo, nil, nil, nil), MethodName</SourceLine>
    <SourceLine>return (catalogInfo.nodeFlags and kFSNodeIsDirectoryMask) = kFSNodeIsDirectoryMask</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>else</SourceLine>
@@ -107,8 +97,6 @@
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Function GetPOSIXPath() As String</SourceLine>
    <SourceLine>#if targetMacOS</SourceLine>
-   <SourceLine>me.pLastErrorCode = 0</SourceLine>
-   <SourceLine></SourceLine>
    <SourceLine>soft declare function CFURLCopyFileSystemPath lib CarbonFramework (anURL as Ptr, pathStyle as Integer) as CFStringRef</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>return CFURLCopyFileSystemPath(me.CFURLPtr, kCFURLPOSIXPathStyle)</SourceLine>
@@ -124,13 +112,10 @@
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Function GetAbsolutePath() As String</SourceLine>
    <SourceLine>#if targetMacOS</SourceLine>
-   <SourceLine>me.pLastErrorCode = 0</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine></SourceLine>
    <SourceLine>soft declare function CFURLCopyFileSystemPath lib CarbonFramework (anURL as Ptr, pathStyle as Integer) as CFStringRef</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>return CFURLCopyFileSystemPath(me.CFURLPtr, kCFURLHFSPathStyle)</SourceLine>
-   <SourceLine>'end if</SourceLine>
+   <SourceLine></SourceLine>
    <SourceLine>#endif</SourceLine>
    <SourceLine>End Function</SourceLine>
   </ItemSource>
@@ -142,9 +127,9 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Function GetIsVisible() As Boolean</SourceLine>
-   <SourceLine>#if targetMacOS</SourceLine>
-   <SourceLine>me.pLastErrorCode = 0</SourceLine>
+   <SourceLine>const MethodName = "GetIsVisible"</SourceLine>
    <SourceLine></SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
    <SourceLine>soft declare function CFURLGetFSRef lib CarbonFramework (url as Ptr, byRef f as FSRef) as Boolean</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim myRef as FSRef</SourceLine>
@@ -157,10 +142,7 @@
    <SourceLine>end if</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim isInvisible as Ptr //points to a CFBooleanRef</SourceLine>
-   <SourceLine>me.pLastErrorCode = LSCopyItemAttribute(myRef, kLSRolesAll, attributeName.Ptr(0), isInvisible)</SourceLine>
-   <SourceLine>if me.pLastErrorCode &lt;&gt; 0 then</SourceLine>
-   <SourceLine>return false</SourceLine>
-   <SourceLine>end if</SourceLine>
+   <SourceLine>Attempt LSCopyItemAttribute(myRef, kLSRolesAll, attributeName.Ptr(0), isInvisible), MethodName</SourceLine>
    <SourceLine>if isInvisible = nil then</SourceLine>
    <SourceLine>return false</SourceLine>
    <SourceLine>end if</SourceLine>
@@ -172,20 +154,7 @@
    <SourceLine>else</SourceLine>
    <SourceLine>return false</SourceLine>
    <SourceLine>end if</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine></SourceLine>
    <SourceLine>#endif</SourceLine>
-   <SourceLine>End Function</SourceLine>
-  </ItemSource>
- </HookInstance>
- <HookInstance>
-  <ItemName>GetLastErrorCode</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Function GetLastErrorCode() As Integer</SourceLine>
-   <SourceLine>return me.pLastErrorCode</SourceLine>
    <SourceLine>End Function</SourceLine>
   </ItemSource>
  </HookInstance>
@@ -196,9 +165,9 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Function GetModificationDate() As Date</SourceLine>
-   <SourceLine>#if targetMacOS</SourceLine>
-   <SourceLine>me.pLastErrorCode = 0</SourceLine>
+   <SourceLine>const MethodName = "GetModificationDate"</SourceLine>
    <SourceLine></SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
    <SourceLine>soft declare function CFURLGetFSRef lib CarbonFramework (url as Ptr, byRef f as FSRef) as Boolean</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim myRef as FSRef</SourceLine>
@@ -206,15 +175,9 @@
    <SourceLine>soft declare function FSGetCatalogInfo lib CarbonFramework (ByRef ref as FSRef, whichInfo as UInt32, ByRef catalogInfo as FSCatalogInfo, outName as Ptr, fsSpec as Ptr, parentRef as Ptr) as Int16</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim catalogInfo as FSCatalogInfo</SourceLine>
-   <SourceLine>me.pLastErrorCode = FSGetCatalogInfo(myRef, kFSCatInfoContentMod, catalogInfo, nil, nil, nil)</SourceLine>
-   <SourceLine>if me.pLastErrorCode &lt;&gt; 0 then</SourceLine>
-   <SourceLine>return Epoch</SourceLine>
-   <SourceLine>end if</SourceLine>
+   <SourceLine>Attempt FSGetCatalogInfo(myRef, kFSCatInfoContentMod, catalogInfo, nil, nil, nil), MethodName</SourceLine>
+   <SourceLine>return GetDateFromUTCDateTime(catalogInfo.contentModDate)</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>//must adjust for GMT on that date</SourceLine>
-   <SourceLine>dim d as new Date</SourceLine>
-   <SourceLine>d.TotalSeconds = catalogInfo.contentModDate.lowSeconds + 4294967296.0*catalogInfo.contentModDate.highSeconds + d.GMTOffset*3600.0</SourceLine>
-   <SourceLine>return d</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>else</SourceLine>
    <SourceLine>return Epoch</SourceLine>
@@ -230,59 +193,18 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Function GetCreationDate() As Date</SourceLine>
+   <SourceLine>const MethodName = "GetCreationDate"</SourceLine>
+   <SourceLine></SourceLine>
    <SourceLine>#if targetMacOS</SourceLine>
-   <SourceLine>me.pLastErrorCode = 0</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>if me.CFURLPtr = nil then</SourceLine>
-   <SourceLine>return Epoch</SourceLine>
-   <SourceLine>end if</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>soft declare function CFURLGetFSRef lib CarbonFramework (url as Ptr, byRef f as FSRef) as Boolean</SourceLine>
+   <SourceLine>soft declare function CFURLGetFSRef lib CarbonFramework (url as Ptr, ByRef f as FSRef) as Boolean</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim myRef as FSRef</SourceLine>
    <SourceLine>if CFURLGetFSRef(me.CFURLPtr, myRef) then</SourceLine>
    <SourceLine>soft declare function FSGetCatalogInfo lib CarbonFramework (ByRef ref as FSRef, whichInfo as UInt32, ByRef catalogInfo as FSCatalogInfo, outName as Ptr, fsSpec as Ptr, parentRef as Ptr) as Int16</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim catalogInfo as FSCatalogInfo</SourceLine>
-   <SourceLine>me.pLastErrorCode = FSGetCatalogInfo(myRef, kFSCatInfoCreateDate, catalogInfo, nil, nil, nil)</SourceLine>
-   <SourceLine>if me.pLastErrorCode &lt;&gt; 0 then</SourceLine>
-   <SourceLine>return Epoch</SourceLine>
-   <SourceLine>end if</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>dim d as new Date</SourceLine>
-   <SourceLine>dim GMTOffset as Double = d.GMTOffset*3600</SourceLine>
-   <SourceLine>d.TotalSeconds = catalogInfo.createDate.lowSeconds + 4294967296*catalogInfo.createDate.highSeconds + GMTOffset</SourceLine>
-   <SourceLine>'d.TotalSeconds = d.TotalSeconds +</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>'soft declare function UCConvertUTCDateTimeToCFAbsoluteTime lib CarbonFramework (byref iUTCDate as UTCDateTime, ByRef oCFTime as Double) as Integer</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'dim createDate as UTCDateTime = catalogInfo.createDate</SourceLine>
-   <SourceLine>'dim cfTime as Double</SourceLine>
-   <SourceLine>'me.pLastErrorCode = UCConvertUTCDateTimeToCFAbsoluteTime(createDate, cfTime)</SourceLine>
-   <SourceLine>'if me.pLastErrorCode &lt;&gt; 0 then</SourceLine>
-   <SourceLine>'return Epoch</SourceLine>
-   <SourceLine>'end if</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'soft declare function CFTimeZoneCopySystem lib CarbonFramework () as Ptr</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'dim systemTZ as Ptr = CFTimeZoneCopySystem</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'soft declare function CFTimeZoneGetSecondsFromGMT lib CarbonFramework (tz as Ptr, at as Double) as Double</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'//must adjust for GMT on that date</SourceLine>
-   <SourceLine>'dim d as new Date</SourceLine>
-   <SourceLine>'d.TotalSeconds = cfTime //+ CFTimeZoneGetSecondsFromGMT(systemTZ, cfTime)</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'if systemTZ &lt;&gt; nil then</SourceLine>
-   <SourceLine>'soft declare sub CFRelease lib CarbonFramework(cf as Ptr)</SourceLine>
-   <SourceLine>'CFRelease systemTZ</SourceLine>
-   <SourceLine>'systemTZ = nil</SourceLine>
-   <SourceLine>'end if</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>return d</SourceLine>
+   <SourceLine>Attempt FSGetCatalogInfo(myRef, kFSCatInfoCreateDate, catalogInfo, nil, nil, nil), MethodName</SourceLine>
+   <SourceLine>return GetDateFromUTCDateTime(catalogInfo.createDate)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>else</SourceLine>
    <SourceLine>return Epoch</SourceLine>
@@ -298,13 +220,9 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Function GetTrueChild(name as String) As DiskItem</SourceLine>
+   <SourceLine>const MethodName = "GetTrueChild"</SourceLine>
+   <SourceLine></SourceLine>
    <SourceLine>#if targetMacOS</SourceLine>
-   <SourceLine>me.pLastErrorCode = 0</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>if me.CFURLPtr = nil then</SourceLine>
-   <SourceLine>return nil</SourceLine>
-   <SourceLine>end if</SourceLine>
-   <SourceLine></SourceLine>
    <SourceLine>soft declare function CFURLGetFSRef lib CarbonFramework (url as Ptr, byRef f as FSRef) as Boolean</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim myRef as FSRef</SourceLine>
@@ -313,17 +231,17 @@
    <SourceLine></SourceLine>
    <SourceLine>soft declare function FSMakeFSRefUnicode lib CarbonFramework (ByRef parentRef as FSRef, nameLength as Integer, name as CString, textEncodingHint as UInt32, ByRef newRef as FSRef) as Integer</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>me.pLastErrorCode = FSMakeFSRefUnicode(myRef, Len(name), ConvertEncoding(name, Encodings.UTF16), kTextEncodingUnknown, childRef)</SourceLine>
-   <SourceLine>if me.pLastErrorCode = 0 then</SourceLine>
+   <SourceLine>dim OSStatus as Integer = FSMakeFSRefUnicode(myRef, Len(name), ConvertEncoding(name, Encodings.UTF16), kTextEncodingUnknown, childRef)</SourceLine>
+   <SourceLine>if OSStatus = noErr then</SourceLine>
    <SourceLine>return CreateFromFSRef(childRef)</SourceLine>
-   <SourceLine>elseIf me.pLastErrorCode = fnfErr then</SourceLine>
+   <SourceLine>elseIf OSStatus = fnfErr then</SourceLine>
    <SourceLine>//make a FolderItem from the URL</SourceLine>
    <SourceLine>soft declare function CFURLCreateCopyAppendingPathComponent lib CarbonFramework (allocator as Ptr, url as Ptr, pathComponent as CFStringRef, isDirectory as Boolean) as Ptr</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>return CreateFromCFURLRef(CFURLCreateCopyAppendingPathComponent(nil, me.CFURLPtr, name, false))</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>else</SourceLine>
-   <SourceLine>return nil</SourceLine>
+   <SourceLine>raise new OSError(OSStatus, "", ClassName + "." + methodName, "")</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>end if</SourceLine>
    <SourceLine></SourceLine>
@@ -341,28 +259,22 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Function GetTrueItems() As DiskItem()</SourceLine>
-   <SourceLine>#if targetMacOS</SourceLine>
-   <SourceLine>me.pLastErrorCode = 0</SourceLine>
-   <SourceLine>if me.CFURLPtr = nil then</SourceLine>
-   <SourceLine>dim noList(-1) as DiskItem</SourceLine>
-   <SourceLine>return noList</SourceLine>
-   <SourceLine>end if</SourceLine>
+   <SourceLine>const MethodName = "GetTrueItems"</SourceLine>
    <SourceLine></SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
    <SourceLine>soft declare function CFURLGetFSRef lib CarbonFramework (url as Ptr, byRef f as FSRef) as Boolean</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim myRef as FSRef</SourceLine>
    <SourceLine>if not CFURLGetFSRef(me.CFURLPtr, myRef) then</SourceLine>
-   <SourceLine>dim noList(-1) as DiskItem</SourceLine>
-   <SourceLine>return noList</SourceLine>
+   <SourceLine>return EmptyList</SourceLine>
    <SourceLine>end if</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>soft declare function FSOpenIterator lib CarbonFramework (ByRef container as FSRef, iteratorFlags as UInt32, ByRef iterator as Ptr) as Int16</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim theIterator as Ptr</SourceLine>
-   <SourceLine>me.pLastErrorCode = FSOpenIterator(myRef, kFSIterateFlat, theIterator)</SourceLine>
-   <SourceLine>if me.pLastErrorCode &lt;&gt; 0 or theIterator = nil then</SourceLine>
-   <SourceLine>dim noList(-1) as DiskItem</SourceLine>
-   <SourceLine>return noList</SourceLine>
+   <SourceLine>Attempt FSOpenIterator(myRef, kFSIterateFlat, theIterator), MethodName</SourceLine>
+   <SourceLine>if theIterator = nil then</SourceLine>
+   <SourceLine>return EmptyList</SourceLine>
    <SourceLine>end if</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim theList() as DiskItem</SourceLine>
@@ -374,7 +286,7 @@
    <SourceLine>dim actualObjectCount as UInt32</SourceLine>
    <SourceLine>dim containerChanged as Boolean</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>me.pLastErrorCode = FSGetCatalogInfoBulk(theIterator, MaxObjectCount, actualObjectCount, containerChanged, kFSCatInfoNone, nil, FSRefArray, nil, nil)</SourceLine>
+   <SourceLine>dim OSErr as Int16 = FSGetCatalogInfoBulk(theIterator, MaxObjectCount, actualObjectCount, containerChanged, kFSCatInfoNone, nil, FSRefArray, nil, nil)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim FSRefPtr as Ptr = FSRefArray</SourceLine>
    <SourceLine>dim offset as Integer = 0</SourceLine>
@@ -386,20 +298,19 @@
    <SourceLine>end if</SourceLine>
    <SourceLine>next</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>if me.pLastErrorCode = errFSNoMoreItems then //we're done</SourceLine>
+   <SourceLine>if OSErr = errFSNoMoreItems then //we're done</SourceLine>
    <SourceLine>exit</SourceLine>
-   <SourceLine>elseIf me.pLastErrorCode = noErr then</SourceLine>
+   <SourceLine>elseIf OSErr = noErr then</SourceLine>
    <SourceLine>//another iteration</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>else //something went wrong, perhaps</SourceLine>
-   <SourceLine>redim theList(-1)</SourceLine>
-   <SourceLine>exit</SourceLine>
+   <SourceLine>raise new OSError(OSErr, "", ClassName + "." + methodName, "")</SourceLine>
    <SourceLine>end if</SourceLine>
    <SourceLine>loop</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>soft declare function FSCloseIterator lib CarbonFramework (iterator as Ptr) as Int16</SourceLine>
-   <SourceLine>dim OSErr as Integer = FSCloseIterator(theIterator)</SourceLine>
+   <SourceLine>dim err as Int16 = FSCloseIterator(theIterator)</SourceLine>
    <SourceLine>theIterator = nil</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>return theList</SourceLine>
@@ -418,17 +329,15 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Sub Delete()</SourceLine>
-   <SourceLine>#if targetMacOS</SourceLine>
-   <SourceLine>me.pLastErrorCode = 0</SourceLine>
+   <SourceLine>const MethodName = "Delete"</SourceLine>
    <SourceLine></SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
    <SourceLine>soft declare function CFURLGetFSRef lib CarbonFramework (url as Ptr, byRef f as FSRef) as Boolean</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim myRef as FSRef</SourceLine>
    <SourceLine>if CFURLGetFSRef(me.CFURLPtr, myRef) then</SourceLine>
    <SourceLine>soft declare function FSDeleteObject lib CarbonFramework (ByRef ref as FSRef) as Int16</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>me.pLastErrorCode = FSDeleteObject(myRef)</SourceLine>
-   <SourceLine></SourceLine>
+   <SourceLine>Attempt FSDeleteObject(myRef), MethodName</SourceLine>
    <SourceLine>else</SourceLine>
    <SourceLine>//I'm pretty sure file doesn't exist</SourceLine>
    <SourceLine>end if</SourceLine>
@@ -443,15 +352,15 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Sub CopyItemTo(destination as DiskItem)</SourceLine>
+   <SourceLine>const MethodName = "CopyItemTo"</SourceLine>
+   <SourceLine></SourceLine>
    <SourceLine>#if targetMacOS</SourceLine>
-   <SourceLine>me.pLastErrorCode = 0</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine></SourceLine>
    <SourceLine>soft declare function FSCopyObjectSync lib CarbonFramework (ByRef source as FSRef, ByRef destDir as FSRef, destName as CFStringRef, target as Ptr, options as UInt32) as Integer</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim source as FSRef = me.FSRef</SourceLine>
    <SourceLine>dim destDir as FSRef</SourceLine>
    <SourceLine>dim destName as String</SourceLine>
+   <SourceLine></SourceLine>
    <SourceLine>if destination.Directory then</SourceLine>
    <SourceLine>destDir = MacOSDiskItem(destination).FSRef //should catch exception...</SourceLine>
    <SourceLine>destName = me.Name</SourceLine>
@@ -461,7 +370,7 @@
    <SourceLine>destName = destination.Name</SourceLine>
    <SourceLine>end if</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>me.pLastErrorCode = FSCopyObjectSync(source, destDir, destName, nil, kFSFileOperationDefaultOptions)</SourceLine>
+   <SourceLine>Attempt FSCopyObjectSync(source, destDir, destName, nil, kFSFileOperationDefaultOptions), MethodName</SourceLine>
    <SourceLine>#endif</SourceLine>
    <SourceLine>End Sub</SourceLine>
   </ItemSource>
@@ -473,13 +382,9 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Sub MoveItemTo(destination as DiskItem)</SourceLine>
+   <SourceLine>const MethodName = "MoveItemTo"</SourceLine>
+   <SourceLine></SourceLine>
    <SourceLine>#if targetMacOS</SourceLine>
-   <SourceLine>me.pLastErrorCode = 0</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>if me.CFURLPtr = nil then</SourceLine>
-   <SourceLine>return</SourceLine>
-   <SourceLine>end if</SourceLine>
-   <SourceLine></SourceLine>
    <SourceLine>soft declare function FSMoveObjectSync lib CarbonFramework (ByRef source as FSRef, ByRef destDir as FSRef, destName as CFStringRef, target as Ptr, options as UInt32) as Integer</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim source as FSRef = me.FSRef</SourceLine>
@@ -494,7 +399,7 @@
    <SourceLine>destName = destination.Name</SourceLine>
    <SourceLine>end if</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>me.pLastErrorCode = FSMoveObjectSync(source, destDir, destName, nil, kFSFileOperationDefaultOptions)</SourceLine>
+   <SourceLine>Attempt FSMoveObjectSync(source, destDir, destName, nil, kFSFileOperationDefaultOptions), MethodName</SourceLine>
    <SourceLine>#endif</SourceLine>
    <SourceLine>End Sub</SourceLine>
   </ItemSource>
@@ -506,15 +411,13 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Sub CreateFile()</SourceLine>
+   <SourceLine>const MethodName = "CreateFile"</SourceLine>
+   <SourceLine></SourceLine>
    <SourceLine>#if targetMacOS</SourceLine>
-   <SourceLine>me.pLastErrorCode = 0</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine></SourceLine>
    <SourceLine>soft declare function FSCreateFileUnicode lib CarbonFramework (ByRef parentRef as FSRef, nameLength as Uint32, name as CString, whichInfo as Uint32, catalogInfo as Ptr, newRef as Ptr, newSpec as Ptr) as Int16</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim parentRef as FSRef = me.Parent.FSRef</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>me.pLastErrorCode = CType(FSCreateFileUnicode(parentRef, CType(Len(me.Name), UInt32), ConvertEncoding(me.Name, Encodings.UTF16), kFSCatInfoNone, nil, nil, nil), Int32)</SourceLine>
+   <SourceLine>Attempt FSCreateFileUnicode(parentRef, CType(Len(me.Name), UInt32), ConvertEncoding(me.Name, Encodings.UTF16), kFSCatInfoNone, nil, nil, nil), MethodName</SourceLine>
    <SourceLine>#endif</SourceLine>
    <SourceLine>End Sub</SourceLine>
   </ItemSource>
@@ -526,13 +429,9 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Function GetParent() As DiskItem</SourceLine>
+   <SourceLine>const MethodName = "GetParent"</SourceLine>
+   <SourceLine></SourceLine>
    <SourceLine>#if targetMacOS</SourceLine>
-   <SourceLine>me.pLastErrorCode = 0</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>if me.CFURLPtr = nil then</SourceLine>
-   <SourceLine>return nil</SourceLine>
-   <SourceLine>end if</SourceLine>
-   <SourceLine></SourceLine>
    <SourceLine>soft declare function CFURLGetFSRef lib CarbonFramework (url as Ptr, byRef f as FSRef) as Boolean</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim myRef as FSRef</SourceLine>
@@ -540,11 +439,7 @@
    <SourceLine>soft declare function FSGetCatalogInfo lib CarbonFramework (ByRef ref as FSRef, whichInfo as UInt32, catalogInfo as Ptr, outName as Ptr, fsSpec as Ptr, ByRef parentRef as FSRef) as Int16</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim parentRef as FSRef</SourceLine>
-   <SourceLine>me.pLastErrorCode = FSGetCatalogInfo(myRef, kFSCatInfoNone, nil, nil, nil, parentRef)</SourceLine>
-   <SourceLine>if me.pLastErrorCode &lt;&gt; 0 then</SourceLine>
-   <SourceLine>return nil</SourceLine>
-   <SourceLine>end if</SourceLine>
-   <SourceLine></SourceLine>
+   <SourceLine>Attempt FSGetCatalogInfo(myRef, kFSCatInfoNone, nil, nil, nil, parentRef), MethodName</SourceLine>
    <SourceLine>return CreateFromFSRef(parentRef)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>else</SourceLine>
@@ -594,9 +489,9 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Function GetExists() As Boolean</SourceLine>
-   <SourceLine>#if targetMacOS</SourceLine>
-   <SourceLine>me.pLastErrorCode = 0</SourceLine>
+   <SourceLine>const MethodName = "GetExists"</SourceLine>
    <SourceLine></SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
    <SourceLine>soft declare function CFURLGetFSRef lib CarbonFramework (url as Ptr, byRef f as FSRef) as Boolean</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim myRef as FSRef</SourceLine>
@@ -612,17 +507,14 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Sub CreateDirectory()</SourceLine>
-   <SourceLine>#if targetMacOS</SourceLine>
+   <SourceLine>const MethodName = "CreateDirectory"</SourceLine>
    <SourceLine></SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
    <SourceLine>soft declare function FSCreateDirectoryUnicode lib CarbonFramework (ByRef parentRef as FSRef, nameLength as Integer, name as CString, whichInfo as UInt32, catalogInfo as Ptr, newRef as Ptr, newSpec as Ptr, newDirID as Ptr) as Int16</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim parentRef as FSRef = me.Parent.FSRef</SourceLine>
    <SourceLine>dim myName as String = ConvertEncoding(me.Name, Encodings.UTF16)</SourceLine>
-   <SourceLine>me.pLastErrorCode = CType(FSCreateDirectoryUnicode(parentRef, Len(myName), myName, kFSCatInfoNone, nil, nil, nil, nil), Int16)</SourceLine>
-   <SourceLine>if RaiseOSErrors and me.pLastErrorCode &lt;&gt; 0 then</SourceLine>
-   <SourceLine>raise new OSError(me.pLastErrorCode, "", "CreateDirectory", "FSCreateDirectoryUnicode")</SourceLine>
-   <SourceLine>end if</SourceLine>
-   <SourceLine></SourceLine>
+   <SourceLine>Attempt FSCreateDirectoryUnicode(parentRef, Len(myName), myName, kFSCatInfoNone, nil, nil, nil, nil), MethodName</SourceLine>
    <SourceLine>#endif</SourceLine>
    <SourceLine>End Sub</SourceLine>
   </ItemSource>
@@ -634,6 +526,8 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Function GetCount() As Integer</SourceLine>
+   <SourceLine>const MethodName = "GetCount"</SourceLine>
+   <SourceLine></SourceLine>
    <SourceLine>#if targetMacOS</SourceLine>
    <SourceLine>soft declare function CFURLGetFSRef lib CarbonFramework (url as Ptr, ByRef f as FSRef) as Boolean</SourceLine>
    <SourceLine></SourceLine>
@@ -642,16 +536,8 @@
    <SourceLine>soft declare function FSGetCatalogInfo lib CarbonFramework (ByRef ref as FSRef, whichInfo as UInt32, ByRef catalogInfo as FSCatalogInfo, outName as Ptr, fsSpec as Ptr, parentRef as Ptr) as Int16</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim catalogInfo as FSCatalogInfo</SourceLine>
-   <SourceLine>me.pLastErrorCode = FSGetCatalogInfo(myRef, kFSCatInfoValence, catalogInfo, nil, nil, nil)</SourceLine>
-   <SourceLine>if me.pLastErrorCode &lt;&gt; 0 then</SourceLine>
-   <SourceLine>if RaiseOSErrors then</SourceLine>
-   <SourceLine>raise new OSError(me.pLastErrorCode, "", "GetCount", "FSGetCatalogInfo")</SourceLine>
-   <SourceLine>else</SourceLine>
-   <SourceLine>return 0</SourceLine>
-   <SourceLine>end if</SourceLine>
-   <SourceLine>end if</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>return catalogInfo.valence</SourceLine>
+   <SourceLine>Attempt FSGetCatalogInfo(myRef, kFSCatInfoValence, catalogInfo, nil, nil, nil), MethodName</SourceLine>
+   <SourceLine>return CType(catalogInfo.valence, Integer)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>else</SourceLine>
    <SourceLine>return 0</SourceLine>
@@ -1011,21 +897,16 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Function MoveToTrash() As DiskItem</SourceLine>
+   <SourceLine>const MethodName = "MoveToTrash"</SourceLine>
+   <SourceLine></SourceLine>
    <SourceLine>#if targetMacOS</SourceLine>
-   <SourceLine>me.pLastErrorCode = 0</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>if me.CFURLPtr = nil then</SourceLine>
-   <SourceLine>return nil</SourceLine>
-   <SourceLine>end if</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>soft declare function CFURLGetFSRef lib CarbonFramework (url as Ptr, byRef f as FSRef) as Boolean</SourceLine>
+   <SourceLine>soft declare function CFURLGetFSRef lib CarbonFramework (url as Ptr, ByRef f as FSRef) as Boolean</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim myRef as FSRef</SourceLine>
    <SourceLine>if CFURLGetFSRef(me.CFURLPtr, myRef) then</SourceLine>
-   <SourceLine>soft declare function FSMoveObjectToTrashSync lib CarbonFramework (byRef source as FSRef, ByRef target as FSRef, options as UInt32) as Integer</SourceLine>
+   <SourceLine>soft declare function FSMoveObjectToTrashSync lib CarbonFramework (ByRef source as FSRef, ByRef target as FSRef, options as UInt32) as Integer</SourceLine>
    <SourceLine>dim target as FSRef</SourceLine>
-   <SourceLine>me.pLastErrorCode = FSMoveObjectToTrashSync(myRef, target, kFSFileOperationDefaultOptions)</SourceLine>
-   <SourceLine></SourceLine>
+   <SourceLine>Attempt FSMoveObjectToTrashSync(myRef, target, kFSFileOperationDefaultOptions), MethodName</SourceLine>
    <SourceLine>return CreateFromFSRef(target)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>else</SourceLine>
@@ -1071,13 +952,13 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Function DataForkName() As String</SourceLine>
-   <SourceLine>#if targetMacOS</SourceLine>
-   <SourceLine>soft declare function FSGetDataForkName lib CarbonFramework (ByRef dataForkName as HFSUniStr255) as Int16</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>dim dataForkName as HFSUniStr255</SourceLine>
-   <SourceLine>me.pLastErrorCode = FSGetDataForkName(dataForkName)</SourceLine>
-   <SourceLine>return StringValue(dataForkName)</SourceLine>
-   <SourceLine>#endif</SourceLine>
+   <SourceLine>'#if targetMacOS</SourceLine>
+   <SourceLine>'soft declare function FSGetDataForkName lib CarbonFramework (ByRef dataForkName as HFSUniStr255) as Int16</SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'dim dataForkName as HFSUniStr255</SourceLine>
+   <SourceLine>'me.pLastErrorCode = FSGetDataForkName(dataForkName)</SourceLine>
+   <SourceLine>'return StringValue(dataForkName)</SourceLine>
+   <SourceLine>'#endif</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>//Apple docs state this name is currently the empty string.</SourceLine>
    <SourceLine>End Function</SourceLine>
@@ -1088,61 +969,6 @@
   <Shared>0</Shared>
   <ItemParams></ItemParams>
   <ItemResult>String</ItemResult>
- </Method>
- <Method>
-  <ItemName>OpenFork</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Function OpenFork(forkName as String) As Integer</SourceLine>
-   <SourceLine>#if targetMacOS</SourceLine>
-   <SourceLine>soft declare function FSOpenFork lib CarbonFramework (ByRef ref as FSRef, forkNameLength as UInt32, forkName as CString, permissions as Int8, ByRef forkRefNum as Int16) as Int16</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>dim myRef as FSRef = me.FSRef</SourceLine>
-   <SourceLine>dim forkRefNum as Int16</SourceLine>
-   <SourceLine>me.pLastErrorCode = FSOpenFork(myRef, Len(forkName), ConvertEncoding(forkName, Encodings.UTF16), 0, forkRefNum)</SourceLine>
-   <SourceLine>return forkRefNum</SourceLine>
-   <SourceLine>#endif</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>'enum {</SourceLine>
-   <SourceLine>'fsCurPerm = 0x00,</SourceLine>
-   <SourceLine>'fsRdPerm = 0x01,</SourceLine>
-   <SourceLine>'fsWrPerm = 0x02,</SourceLine>
-   <SourceLine>'fsRdWrPerm = 0x03,</SourceLine>
-   <SourceLine>'fsRdWrShPerm = 0x04,</SourceLine>
-   <SourceLine>'fsRdDenyPerm = 0x10,</SourceLine>
-   <SourceLine>'fsWrDenyPerm = 0x20</SourceLine>
-   <SourceLine>'};</SourceLine>
-   <SourceLine>End Function</SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <AliasName></AliasName>
-  <ItemFlags>33</ItemFlags>
-  <Shared>0</Shared>
-  <ItemParams>forkName as String</ItemParams>
-  <ItemResult>Integer</ItemResult>
- </Method>
- <Method>
-  <ItemName>OpenDataStream</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Function OpenDataStream() As DataStream</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>End Function</SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <AliasName></AliasName>
-  <ItemFlags>0</ItemFlags>
-  <Shared>0</Shared>
-  <ItemParams></ItemParams>
-  <ItemResult>DataStream</ItemResult>
  </Method>
  <Method>
   <ItemName>CreateFromAbsolutePath</ItemName>
@@ -1338,6 +1164,91 @@
   <ItemParams>path as String</ItemParams>
   <ItemResult>DiskItem</ItemResult>
  </Method>
+ <Method>
+  <ItemName>Attempt</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Shared Sub Attempt(errorCode as Integer, methodName as String)</SourceLine>
+   <SourceLine>if errorCode &lt;&gt; 0 then</SourceLine>
+   <SourceLine>raise new OSError(errorCode, "", ClassName + "." + methodName, "")</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <Shared>1</Shared>
+  <ItemParams>errorCode as Integer, methodName as String</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>GetDateFromUTCDateTime</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Shared Function GetDateFromUTCDateTime(s as UTCDateTime) As Date</SourceLine>
+   <SourceLine>'dim d as new Date</SourceLine>
+   <SourceLine>'dim GMTOffset as Double = d.GMTOffset*3600</SourceLine>
+   <SourceLine>'d.TotalSeconds = catalogInfo.createDate.lowSeconds + 4294967296*catalogInfo.createDate.highSeconds + GMTOffset</SourceLine>
+   <SourceLine>'d.TotalSeconds = d.TotalSeconds +</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>'soft declare function UCConvertUTCDateTimeToCFAbsoluteTime lib CarbonFramework (byref iUTCDate as UTCDateTime, ByRef oCFTime as Double) as Integer</SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'dim createDate as UTCDateTime = catalogInfo.createDate</SourceLine>
+   <SourceLine>'dim cfTime as Double</SourceLine>
+   <SourceLine>'me.pLastErrorCode = UCConvertUTCDateTimeToCFAbsoluteTime(createDate, cfTime)</SourceLine>
+   <SourceLine>'if me.pLastErrorCode &lt;&gt; 0 then</SourceLine>
+   <SourceLine>'return Epoch</SourceLine>
+   <SourceLine>'end if</SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'soft declare function CFTimeZoneCopySystem lib CarbonFramework () as Ptr</SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'dim systemTZ as Ptr = CFTimeZoneCopySystem</SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'soft declare function CFTimeZoneGetSecondsFromGMT lib CarbonFramework (tz as Ptr, at as Double) as Double</SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'//must adjust for GMT on that date</SourceLine>
+   <SourceLine>'dim d as new Date</SourceLine>
+   <SourceLine>'d.TotalSeconds = cfTime //+ CFTimeZoneGetSecondsFromGMT(systemTZ, cfTime)</SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'if systemTZ &lt;&gt; nil then</SourceLine>
+   <SourceLine>'soft declare sub CFRelease lib CarbonFramework(cf as Ptr)</SourceLine>
+   <SourceLine>'CFRelease systemTZ</SourceLine>
+   <SourceLine>'systemTZ = nil</SourceLine>
+   <SourceLine>'end if</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <Shared>1</Shared>
+  <ItemParams>s as UTCDateTime</ItemParams>
+  <ItemResult>Date</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>EmptyList</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Shared Function EmptyList() As DiskItem()</SourceLine>
+   <SourceLine>dim theList(-1) as DiskItem</SourceLine>
+   <SourceLine>return theList</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <Shared>1</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult>DiskItem()</ItemResult>
+ </Method>
  <Property>
   <ItemName>CFURLPtr</ItemName>
   <Compatibility></Compatibility>
@@ -1349,20 +1260,6 @@
   </ItemSource>
   <TextEncoding>134217984</TextEncoding>
   <ItemDeclaration>CFURLPtr As Ptr</ItemDeclaration>
-  <ItemFlags>33</ItemFlags>
-  <Shared>0</Shared>
- </Property>
- <Property>
-  <ItemName>pLastErrorCode</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>pLastErrorCode As Integer</SourceLine>
-   <SourceLine></SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <ItemDeclaration>pLastErrorCode As Integer</ItemDeclaration>
   <ItemFlags>33</ItemFlags>
   <Shared>0</Shared>
  </Property>
@@ -1680,6 +1577,16 @@
   <ItemType>0</ItemType>
   <ItemDef>System.framework</ItemDef>
   <ItemFlags>33</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>ClassName</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>ClassName</ItemName>
+  <ItemType>0</ItemType>
+  <ItemDef>MacOSDiskItem</ItemDef>
+  <ItemFlags>0</ItemFlags>
  </Constant>
  <Structure>
   <TextEncoding>134217984</TextEncoding>

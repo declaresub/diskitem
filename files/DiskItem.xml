@@ -360,14 +360,6 @@
   <ItemResult>Boolean</ItemResult>
  </Hook>
  <Hook>
-  <ItemName>GetLastErrorCode</ItemName>
-  <TextEncoding>134217984</TextEncoding>
-  <ItemFlags>33</ItemFlags>
-  <SystemFlags>0</SystemFlags>
-  <ItemParams></ItemParams>
-  <ItemResult>Integer</ItemResult>
- </Hook>
- <Hook>
   <ItemName>GetModificationDate</ItemName>
   <TextEncoding>134217984</TextEncoding>
   <ItemFlags>33</ItemFlags>
@@ -658,32 +650,6 @@
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Get</SourceLine>
    <SourceLine>return raiseEvent GetIsVisible</SourceLine>
-   <SourceLine>End Get</SourceLine>
-  </GetAccessor>
- </Property>
- <Property>
-  <ItemName>LastErrorCode</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>LastErrorCode As Integer</SourceLine>
-   <SourceLine></SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <ItemDeclaration>LastErrorCode As Integer</ItemDeclaration>
-  <ItemFlags>0</ItemFlags>
-  <Shared>0</Shared>
-  <SetAccessor>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Set</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>End Set</SourceLine>
-  </SetAccessor>
-  <GetAccessor>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Get</SourceLine>
-   <SourceLine>return raiseEvent GetLastErrorCode</SourceLine>
    <SourceLine>End Get</SourceLine>
   </GetAccessor>
  </Property>
