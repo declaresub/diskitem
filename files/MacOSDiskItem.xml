@@ -570,9 +570,12 @@
    <SourceLine>return false</SourceLine>
    <SourceLine>end if</SourceLine>
    <SourceLine>else</SourceLine>
-   <SourceLine>return me.Parent.Equals(g.Parent) and (me.Name = g.Name) //should check volume for case-sensitivity</SourceLine>
+   <SourceLine>return me.Parent.Equals(g.Parent) and me.AreHFSExtendedFileNamesEqual(me.Name, g.Name)</SourceLine>
    <SourceLine>end if</SourceLine>
    <SourceLine>#endif</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>//the problem of name equality doesn't appear to have a general solution for all filesystems</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>End Function</SourceLine>
   </ItemSource>
@@ -1242,6 +1245,97 @@
   <ItemParams></ItemParams>
   <ItemResult>DiskItem()</ItemResult>
  </Method>
+ <Method>
+  <ItemName>IsVolumeCaseSensitive</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function IsVolumeCaseSensitive() As Boolean</SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
+   <SourceLine>soft declare function FSGetVolumeParms lib CarbonFramework (volume as Int16, ByRef buffer as GetVolParmsInfoBuffer, bufferSize as Integer) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim buffer as GetVolParmsInfoBuffer</SourceLine>
+   <SourceLine>Attempt FSGetVolumeParms(me.VolRefNum, buffer, buffer.Size), "IsVolumeCaseSensitive"</SourceLine>
+   <SourceLine>dim isCaseSensitive as Integer = Bitwise.ShiftLeft(1, bIsCaseSensitive)</SourceLine>
+   <SourceLine>return (buffer.vMExtendedAttributes and isCaseSensitive) = isCaseSensitive</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult>Boolean</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>AreHFSExtendedFileNamesEqual</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Shared Function AreHFSExtendedFileNamesEqual(name1 as String, name2 as String) As Boolean</SourceLine>
+   <SourceLine>const MethodName = "AreHFSExtendedFileNamesEqual"</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>if Encoding(name1) is nil or Encoding(name2) is nil then</SourceLine>
+   <SourceLine>//we could still check filesystem properties</SourceLine>
+   <SourceLine>return (name1 = name2)</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
+   <SourceLine>soft declare function CFStringCreateMutableCopy lib CarbonFramework (alloc as Ptr, maxLength as UInt32, theString as CFStringRef) as CFStringRef</SourceLine>
+   <SourceLine>soft declare sub CFStringNormalize lib CarbonFramework (theString as CFStringRef, theForm as UInt32)</SourceLine>
+   <SourceLine>const kCFStringNormalizationFormD = 0</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim name1Ref as CFStringRef = CFStringCreateMutableCopy(nil, 0, name1)</SourceLine>
+   <SourceLine>CFStringNormalize name1Ref, kCFStringNormalizationFormD</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim name2Ref as CFStringRef = CFStringCreateMutableCopy(nil, 0, name2)</SourceLine>
+   <SourceLine>CFStringNormalize name1Ref, kCFStringNormalizationFormD</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>soft declare sub CFStringGetCharacters lib CarbonFramework (theString as CFStringRef, range as CFRange, buffer as Ptr)</SourceLine>
+   <SourceLine>soft declare function CFStringGetLength lib CarbonFramework (theString as CFStringRef) as Int32</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim name1Range as CFRange</SourceLine>
+   <SourceLine>name1Range.length = CFStringGetLength(name1Ref)</SourceLine>
+   <SourceLine>dim name1Buffer as new MemoryBlock(2*name1Range.length)</SourceLine>
+   <SourceLine>CFStringGetCharacters name1, name1range, name1buffer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim name2Range as CFRange</SourceLine>
+   <SourceLine>name2Range.length = CFStringGetLength(name2Ref)</SourceLine>
+   <SourceLine>dim name2Buffer as new MemoryBlock(2*name2Range.length)</SourceLine>
+   <SourceLine>CFStringGetCharacters name2, name2range, name2buffer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>soft declare function UCCompareTextNoLocale lib CarbonFramework (options as UInt32, text1Ptr as Ptr, text1Length as Integer, text2Ptr as Ptr, text2Length as Integer, ByRef equivalent as Boolean, order as Ptr) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>const kUCCollateTypeHFSExtended = 1</SourceLine>
+   <SourceLine>const kUCCollateTypeShiftBits = 24</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim options as UInt32 = Bitwise.ShiftLeft(kUCCollateTypeHFSExtended, kUCCollateTypeShiftBits)</SourceLine>
+   <SourceLine>dim areEqual as Boolean</SourceLine>
+   <SourceLine>dim OSStatus as Integer = UCCompareTextNoLocale(options, name1Buffer, name1Range.length, name2Buffer, name2Range.length, areEqual, nil)</SourceLine>
+   <SourceLine>if OSStatus = noErr then</SourceLine>
+   <SourceLine>return areEqual</SourceLine>
+   <SourceLine>else</SourceLine>
+   <SourceLine>return false //I'm undecided as to whether I should raise an exception....</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <Shared>1</Shared>
+  <ItemParams>name1 as String, name2 as String</ItemParams>
+  <ItemResult>Boolean</ItemResult>
+ </Method>
  <Property>
   <ItemName>CFURLPtr</ItemName>
   <Compatibility></Compatibility>
@@ -1262,7 +1356,7 @@
   <Visible>1</Visible>
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Property VolRefNum As Integer</SourceLine>
+   <SourceLine>VolRefNum As Integer</SourceLine>
    <SourceLine></SourceLine>
   </ItemSource>
   <TextEncoding>134217984</TextEncoding>
@@ -1343,13 +1437,6 @@
    <InheritsFrom>DiskItem</InheritsFrom>
   </ViewProperty>
   <ViewProperty>
-   <ObjName>LastErrorCode</ObjName>
-   <PropertyGroup>Behavior</PropertyGroup>
-   <PropertyValue>0</PropertyValue>
-   <ItemType>Integer</ItemType>
-   <InheritsFrom>DiskItem</InheritsFrom>
-  </ViewProperty>
-  <ViewProperty>
    <ObjName>Count</ObjName>
    <PropertyGroup>Behavior</PropertyGroup>
    <PropertyValue>0</PropertyValue>
@@ -1388,6 +1475,12 @@
    <PropertyGroup>Position</PropertyGroup>
    <PropertyValue>0</PropertyValue>
    <InheritsFrom>Object</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>VolRefNum</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
   </ViewProperty>
  </ViewBehavior>
  <Constant>
@@ -1640,6 +1733,26 @@
   <ItemDef>&amp;h00000008</ItemDef>
   <ItemFlags>33</ItemFlags>
  </Constant>
+ <Constant>
+  <ItemName>bIsCaseSensitive</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>bIsCaseSensitive</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>22</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>bIsCasePreserving</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>bIsCasePreserving</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>23</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
  <Structure>
   <TextEncoding>134217984</TextEncoding>
   <ItemName>FSRef</ItemName>
@@ -1730,6 +1843,19 @@
    <SourceLine>vMExtendedAttributes as Int32</SourceLine>
    <SourceLine>vMDeviceID as Ptr</SourceLine>
    <SourceLine>vMMaxNameLength as UInt32</SourceLine>
+  </ItemSource>
+ </Structure>
+ <Structure>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>CFRange</ItemName>
+  <ItemFlags>33</ItemFlags>
+  <ItemName>CFRange</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>location as Int32</SourceLine>
+   <SourceLine>length as Int32</SourceLine>
   </ItemSource>
  </Structure>
 </block>
