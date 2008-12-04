@@ -570,14 +570,7 @@
    <SourceLine>return false</SourceLine>
    <SourceLine>end if</SourceLine>
    <SourceLine>else</SourceLine>
-   <SourceLine>'soft declare function CFEqual lib CarbonFramework (cf1 as Ptr, cf2 as Ptr) as Boolean</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine></SourceLine>
    <SourceLine>return me.Parent.Equals(g.Parent) and (me.Name = g.Name) //should check volume for case-sensitivity</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>'return CFEqual(me.CFURLPtr, MacOSDiskItem(g).CFURLPtr)</SourceLine>
    <SourceLine>end if</SourceLine>
    <SourceLine>#endif</SourceLine>
    <SourceLine></SourceLine>
@@ -1263,6 +1256,45 @@
   <ItemFlags>33</ItemFlags>
   <Shared>0</Shared>
  </Property>
+ <Property>
+  <ItemName>VolRefNum</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Property VolRefNum As Integer</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>VolRefNum As Integer</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <SetAccessor>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Set</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Set</SourceLine>
+  </SetAccessor>
+  <GetAccessor>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Get</SourceLine>
+   <SourceLine>const MethodName = "GetVolRefNum"</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
+   <SourceLine>soft declare function CFURLGetFSRef lib CarbonFramework (url as Ptr, ByRef f as FSRef) as Boolean</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim parentRef as FSRef = me.Parent.FSRef</SourceLine>
+   <SourceLineBreakpoint>6</SourceLineBreakpoint>
+   <SourceLine></SourceLine>
+   <SourceLine>soft declare function FSGetCatalogInfo lib CarbonFramework (ByRef ref as FSRef, whichInfo as UInt32, ByRef catalogInfo as FSCatalogInfo, outName as Ptr, fsSpec as Ptr, parentRef as Ptr) as Int16</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim catalogInfo as FSCatalogInfo</SourceLine>
+   <SourceLine>Attempt FSGetCatalogInfo(parentRef, kFSCatInfoVolume, catalogInfo, nil, nil, nil), MethodName</SourceLine>
+   <SourceLine>return catalogInfo.volume</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine>End Get</SourceLine>
+  </GetAccessor>
+ </Property>
  <ViewBehavior>
   <ViewProperty>
    <ObjName>Alias</ObjName>
@@ -1588,6 +1620,26 @@
   <ItemDef>MacOSDiskItem</ItemDef>
   <ItemFlags>0</ItemFlags>
  </Constant>
+ <Constant>
+  <ItemName>kFSCatInfoVolume</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>kFSCatInfoVolume</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>&amp;h00000004</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>kFSCatInfoParentDirID</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>kFSCatInfoParentDirID</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>&amp;h00000008</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
  <Structure>
   <TextEncoding>134217984</TextEncoding>
   <ItemName>FSRef</ItemName>
@@ -1658,6 +1710,26 @@
    <SourceLine>highSeconds as UInt16</SourceLine>
    <SourceLine>lowSeconds as UInt32</SourceLine>
    <SourceLine>fraction as UInt16</SourceLine>
+  </ItemSource>
+ </Structure>
+ <Structure>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>GetVolParmsInfoBuffer</ItemName>
+  <ItemFlags>0</ItemFlags>
+  <ItemName>GetVolParmsInfoBuffer</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>vMVersion as Int16</SourceLine>
+   <SourceLine>vMAttrib as Int32</SourceLine>
+   <SourceLine>vMlocalHand as Ptr</SourceLine>
+   <SourceLine>vMServerAddr as Int32</SourceLine>
+   <SourceLine>vMVolumeGrade as Int32</SourceLine>
+   <SourceLine>vMForeignPrivID as Int16</SourceLine>
+   <SourceLine>vMExtendedAttributes as Int32</SourceLine>
+   <SourceLine>vMDeviceID as Ptr</SourceLine>
+   <SourceLine>vMMaxNameLength as UInt32</SourceLine>
   </ItemSource>
  </Structure>
 </block>
