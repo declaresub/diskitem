@@ -287,10 +287,10 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine> Shared Function CreateFromSystemPath(path as String) As DiskItem</SourceLine>
-   <SourceLine>#if targetMacOS then</SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
    <SourceLine>return MacOSDiskItem.CreateFromSystemPath(path)</SourceLine>
    <SourceLine>#endif</SourceLine>
-   <SourceLine>#if targetMacOS then</SourceLine>
+   <SourceLine>#if targetLinux</SourceLine>
    <SourceLine>return LinuxDiskItem.CreateFromSystemPath(path)</SourceLine>
    <SourceLine>#endif</SourceLine>
    <SourceLine></SourceLine>
@@ -840,12 +840,6 @@
    <PropertyGroup>Behavior</PropertyGroup>
    <PropertyValue>0</PropertyValue>
    <ItemType>Boolean</ItemType>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>LastErrorCode</ObjName>
-   <PropertyGroup>Behavior</PropertyGroup>
-   <PropertyValue>0</PropertyValue>
-   <ItemType>Integer</ItemType>
   </ViewProperty>
   <ViewProperty>
    <ObjName>Count</ObjName>
