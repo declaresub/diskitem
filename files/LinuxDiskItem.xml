@@ -45,7 +45,7 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Function GetModificationDate() As Date</SourceLine>
-   <SourceLine>return me.mtime</SourceLine>
+   <SourceLine>'return me.mtime</SourceLine>
    <SourceLine>End Function</SourceLine>
   </ItemSource>
  </HookInstance>
@@ -85,67 +85,6 @@
   <Shared>0</Shared>
   <ItemParams></ItemParams>
   <ItemResult></ItemResult>
- </Method>
- <Method>
-  <ItemName>stat</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Function stat() As MemoryBlock</SourceLine>
-   <SourceLine>#if targetLinux</SourceLine>
-   <SourceLine>soft declare function xstat lib libc alias "__xstat64" (ver as Int16, path as CString, s as Ptr) as Integer</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>dim s as new MemoryBlock(statLinux.Size)</SourceLine>
-   <SourceLine>const STAT_VER_LINUX = 3</SourceLine>
-   <SourceLine>'print "calling xstat"</SourceLine>
-   <SourceLine>dim result as Integer = xstat(STAT_VER_LINUX, me.AbsolutePath, s)</SourceLine>
-   <SourceLine>if result = 0 then</SourceLine>
-   <SourceLine>return s</SourceLine>
-   <SourceLine>else</SourceLine>
-   <SourceLine>dim errorCode as Integer = libcErrorCode</SourceLine>
-   <SourceLine>dim errorMsg as String = libcErrorMessage(errorCode)</SourceLine>
-   <SourceLine>raise new OSError(errorCode, errorMsg, "stat", "__xstat64")</SourceLine>
-   <SourceLine>'print "stat succeeded."</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>'print "dev = " + Str(s.st_dev)</SourceLine>
-   <SourceLine>''print "pad = " + Str(s.pad1)</SourceLine>
-   <SourceLine>'print "inode = " + Str(s.st_ino)</SourceLine>
-   <SourceLine>'print "mode = " + Str(s.st_mode)</SourceLine>
-   <SourceLine>'print "nlink = " + Str(s.st_nlink)</SourceLine>
-   <SourceLine>'print "uid = " + Str(s.st_uid)</SourceLine>
-   <SourceLine>'print "gid = " + Str(s.st_gid)</SourceLine>
-   <SourceLine>'print "rdev = " + Str(s.st_rdev)</SourceLine>
-   <SourceLine>'print "size = " + Str(s.st_size)</SourceLine>
-   <SourceLine>'print "blksize = " + Str(s.st_blksize)</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'print "mtime = " + Str(s.st_mtime)</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'print "hex struct data:"</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>'dim structData() as String = SplitB(s.StringValue(true), "")</SourceLine>
-   <SourceLine>'dim hexData as String</SourceLine>
-   <SourceLine>'for i as Integer = 0 to UBound(structData)</SourceLine>
-   <SourceLine>'if AscB(structData(i)) &lt; 16 then</SourceLine>
-   <SourceLine>'hexData = HexData + "0"</SourceLine>
-   <SourceLine>'end if</SourceLine>
-   <SourceLine>'hexData = HexData + Hex(AscB(structData(i)))</SourceLine>
-   <SourceLine>'next</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'print hexData</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>end if</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>#endif</SourceLine>
-   <SourceLine>End Function</SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <AliasName></AliasName>
-  <ItemFlags>0</ItemFlags>
-  <Shared>0</Shared>
-  <ItemParams></ItemParams>
-  <ItemResult>MemoryBlock</ItemResult>
  </Method>
  <Method>
   <ItemName>libcErrorCode</ItemName>
@@ -200,31 +139,6 @@
   <Shared>1</Shared>
   <ItemParams>code as Integer</ItemParams>
   <ItemResult>String</ItemResult>
- </Method>
- <Method>
-  <ItemName>mtime</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Function mtime() As Date</SourceLine>
-   <SourceLine>#if targetLinux</SourceLine>
-   <SourceLine>dim m as MemoryBlock = stat()</SourceLine>
-   <SourceLine>dim p as Ptr = m</SourceLine>
-   <SourceLine>dim s as statLinux = p.statLinux</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>dim d as new Date</SourceLine>
-   <SourceLine>d.TotalSeconds = LinuxEpoch.TotalSeconds + CType(s.st_mtime.tv_sec, Double)</SourceLine>
-   <SourceLine>return d</SourceLine>
-   <SourceLine>#endif</SourceLine>
-   <SourceLine>End Function</SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <AliasName></AliasName>
-  <ItemFlags>33</ItemFlags>
-  <Shared>0</Shared>
-  <ItemParams></ItemParams>
-  <ItemResult>Date</ItemResult>
  </Method>
  <Method>
   <ItemName>LinuxEpoch</ItemName>
@@ -403,45 +317,5 @@
   <ItemDef>/usr/lib/libc.so</ItemDef>
   <ItemFlags>33</ItemFlags>
  </Constant>
- <Structure>
-  <TextEncoding>134217984</TextEncoding>
-  <ItemName>statLinux</ItemName>
-  <ItemFlags>0</ItemFlags>
-  <ItemName>statLinux</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>st_dev as UInt64</SourceLine>
-   <SourceLine>pad1 as UInt32</SourceLine>
-   <SourceLine>st_ino as UInt32</SourceLine>
-   <SourceLine>st_mode as UInt32</SourceLine>
-   <SourceLine>st_nlink as Uint32</SourceLine>
-   <SourceLine>st_uid as UInt32</SourceLine>
-   <SourceLine>st_gid as UInt32</SourceLine>
-   <SourceLine>st_rdev as UInt64</SourceLine>
-   <SourceLine>pad2 as UInt32</SourceLine>
-   <SourceLine>st_size as UInt64</SourceLine>
-   <SourceLine>st_blksize as  UInt32</SourceLine>
-   <SourceLine>st_blocks as UInt64</SourceLine>
-   <SourceLine>st_atime as timespec_Linux</SourceLine>
-   <SourceLine>st_mtime as timespec_Linux</SourceLine>
-   <SourceLine>st_ctime as timespec_Linux</SourceLine>
-   <SourceLine>st_ino64 as Uint64</SourceLine>
-  </ItemSource>
- </Structure>
- <Structure>
-  <TextEncoding>134217984</TextEncoding>
-  <ItemName>timespec_Linux</ItemName>
-  <ItemFlags>0</ItemFlags>
-  <ItemName>timespec_Linux</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>tv_sec as Int32</SourceLine>
-   <SourceLine>tv_nsec as Int32</SourceLine>
-  </ItemSource>
- </Structure>
 </block>
 </RBProject>

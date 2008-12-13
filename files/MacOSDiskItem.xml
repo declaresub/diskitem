@@ -79,6 +79,7 @@
    <SourceLine>soft declare function FSGetCatalogInfo lib CarbonFramework (ByRef ref as FSRef, whichInfo as UInt32, ByRef catalogInfo as FSCatalogInfo, outName as Ptr, fsSpec as Ptr, parentRef as Ptr) as Int16</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim catalogInfo as FSCatalogInfo</SourceLine>
+   <SourceLineBreakpoint>10</SourceLineBreakpoint>
    <SourceLine>Attempt FSGetCatalogInfo(myRef, kFSCatInfoNodeFlags, catalogInfo, nil, nil, nil), MethodName</SourceLine>
    <SourceLine>return (catalogInfo.nodeFlags and kFSNodeIsDirectoryMask) = kFSNodeIsDirectoryMask</SourceLine>
    <SourceLine></SourceLine>
@@ -332,6 +333,9 @@
    <SourceLine>const MethodName = "Delete"</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>#if targetMacOS</SourceLine>
+   <SourceLine>if me.Symlink then</SourceLine>
+   <SourceLine>unlink me</SourceLine>
+   <SourceLine>else</SourceLine>
    <SourceLine>soft declare function CFURLGetFSRef lib CarbonFramework (url as Ptr, byRef f as FSRef) as Boolean</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim myRef as FSRef</SourceLine>
@@ -340,6 +344,7 @@
    <SourceLine>Attempt FSDeleteObject(myRef), MethodName</SourceLine>
    <SourceLine>else</SourceLine>
    <SourceLine>//I'm pretty sure file doesn't exist</SourceLine>
+   <SourceLine>end if</SourceLine>
    <SourceLine>end if</SourceLine>
    <SourceLine>#endif</SourceLine>
    <SourceLine>End Sub</SourceLine>
@@ -452,37 +457,6 @@
   </ItemSource>
  </HookInstance>
  <HookInstance>
-  <ItemName>GetIsAlias</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Function GetIsAlias() As Boolean</SourceLine>
-   <SourceLine>'#if targetMacOS</SourceLine>
-   <SourceLine>'me.pLastErrorCode = 0</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'if me.CFURLPtr = nil then</SourceLine>
-   <SourceLine>'return false</SourceLine>
-   <SourceLine>'end if</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'OSStatus LSCopyItemInfoForURL (</SourceLine>
-   <SourceLine>'CFURLRef inURL,</SourceLine>
-   <SourceLine>'LSRequestedInfo inWhichInfo,</SourceLine>
-   <SourceLine>'LSItemInfoRecord *outItemInfo</SourceLine>
-   <SourceLine>');</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'#endif</SourceLine>
-   <SourceLine>End Function</SourceLine>
-  </ItemSource>
- </HookInstance>
- <HookInstance>
   <ItemName>GetExists</ItemName>
   <Compatibility></Compatibility>
   <Visible>1</Visible>
@@ -496,6 +470,7 @@
    <SourceLine></SourceLine>
    <SourceLine>dim myRef as FSRef</SourceLine>
    <SourceLine>return CFURLGetFSRef(me.CFURLPtr, myRef)</SourceLine>
+   <SourceLineBreakpoint>7</SourceLineBreakpoint>
    <SourceLine>#endif</SourceLine>
    <SourceLine>End Function</SourceLine>
   </ItemSource>
@@ -565,7 +540,7 @@
    <SourceLine>//g exists</SourceLine>
    <SourceLine>soft declare function FSCompareFSRefs lib CarbonFramework (ByRef ref1 as FSRef, ByRef ref2 as FSRef) as Int16</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>return (FSCompareFSRefs(myRef, gRef) = 0)</SourceLine>
+   <SourceLine>return (FSCompareFSRefs(myRef, gRef) = 0) //returns true when one is an alias of the other...</SourceLine>
    <SourceLine>else</SourceLine>
    <SourceLine>return false</SourceLine>
    <SourceLine>end if</SourceLine>
@@ -603,6 +578,38 @@
    <SourceLine>else</SourceLine>
    <SourceLine>return 0</SourceLine>
    <SourceLine>end if</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+ </HookInstance>
+ <HookInstance>
+  <ItemName>GetIsAlias</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function GetIsAlias() As Boolean</SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
+   <SourceLine>soft declare function FSIsAliasFile lib CarbonFramework (ByRef fileRef as FSRef, ByRef aliasFileFlag as Boolean, ByRef folderFlag as Boolean) as Int16</SourceLine>
+   <SourceLine>dim ref as FSRef = me.FSRef</SourceLine>
+   <SourceLine>dim aliasFileFlag as Boolean</SourceLine>
+   <SourceLine>dim folderFlag as Boolean</SourceLine>
+   <SourceLine>dim OSErr as Int16 = FSIsAliasFile(ref, aliasFileFlag, folderFlag)</SourceLine>
+   <SourceLine>return aliasFileFlag</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+ </HookInstance>
+ <HookInstance>
+  <ItemName>GetIsSymlink</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function GetIsSymlink() As Boolean</SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
+   <SourceLine>dim record as LSItemInfoRecord = me.CopyItemInfo(kLSRequestBasicFlagsOnly)</SourceLine>
+   <SourceLine>return (record.flags and kLSItemInfoIsSymlink) = kLSItemInfoIsSymlink</SourceLine>
    <SourceLine>#endif</SourceLine>
    <SourceLine>End Function</SourceLine>
   </ItemSource>
@@ -1197,37 +1204,11 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Shared Function GetDateFromUTCDateTime(s as UTCDateTime) As Date</SourceLine>
-   <SourceLine>'dim d as new Date</SourceLine>
-   <SourceLine>'dim GMTOffset as Double = d.GMTOffset*3600</SourceLine>
-   <SourceLine>'d.TotalSeconds = catalogInfo.createDate.lowSeconds + 4294967296*catalogInfo.createDate.highSeconds + GMTOffset</SourceLine>
-   <SourceLine>'d.TotalSeconds = d.TotalSeconds +</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>'soft declare function UCConvertUTCDateTimeToCFAbsoluteTime lib CarbonFramework (byref iUTCDate as UTCDateTime, ByRef oCFTime as Double) as Integer</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'dim createDate as UTCDateTime = catalogInfo.createDate</SourceLine>
-   <SourceLine>'dim cfTime as Double</SourceLine>
-   <SourceLine>'me.pLastErrorCode = UCConvertUTCDateTimeToCFAbsoluteTime(createDate, cfTime)</SourceLine>
-   <SourceLine>'if me.pLastErrorCode &lt;&gt; 0 then</SourceLine>
-   <SourceLine>'return Epoch</SourceLine>
-   <SourceLine>'end if</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'soft declare function CFTimeZoneCopySystem lib CarbonFramework () as Ptr</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'dim systemTZ as Ptr = CFTimeZoneCopySystem</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'soft declare function CFTimeZoneGetSecondsFromGMT lib CarbonFramework (tz as Ptr, at as Double) as Double</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'//must adjust for GMT on that date</SourceLine>
-   <SourceLine>'dim d as new Date</SourceLine>
-   <SourceLine>'d.TotalSeconds = cfTime //+ CFTimeZoneGetSecondsFromGMT(systemTZ, cfTime)</SourceLine>
-   <SourceLine>'</SourceLine>
-   <SourceLine>'if systemTZ &lt;&gt; nil then</SourceLine>
-   <SourceLine>'soft declare sub CFRelease lib CarbonFramework(cf as Ptr)</SourceLine>
-   <SourceLine>'CFRelease systemTZ</SourceLine>
-   <SourceLine>'systemTZ = nil</SourceLine>
-   <SourceLine>'end if</SourceLine>
+   <SourceLine>dim d as new Date</SourceLine>
+   <SourceLine>const SecondsinOneHour = 3600.0</SourceLine>
+   <SourceLine>dim GMTOffset as Double = d.GMTOffset*SecondsinOneHour</SourceLine>
+   <SourceLine>d.TotalSeconds = s.lowSeconds + 4294967296*s.highSeconds + GMTOffset</SourceLine>
+   <SourceLine>return d</SourceLine>
    <SourceLine>End Function</SourceLine>
   </ItemSource>
   <TextEncoding>134217984</TextEncoding>
@@ -1355,6 +1336,10 @@
    <SourceLine>Sub Unlink()</SourceLine>
    <SourceLine>#if targetMacOS</SourceLine>
    <SourceLine>if System.IsFunctionAvailable("FSUnlinkObject", CarbonFramework) then //FSUnlinkObject was added in 10.5</SourceLine>
+   <SourceLine>//Contrary to claims, FSUnlinkObject doesn't behave like unlink.  If you call </SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
    <SourceLine>soft declare function FSUnlinkObject lib CarbonFramework (ByRef ref as MacOSDiskItem.FSRef) as Int16</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim ref as FSRef = me.FSRef</SourceLine>
@@ -1384,6 +1369,66 @@
   <ItemParams></ItemParams>
   <ItemResult></ItemResult>
  </Method>
+ <Method>
+  <ItemName>CopyItemInfo</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function CopyItemInfo(inWhichInfo as UInt32) As LSItemInfoRecord</SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
+   <SourceLine>soft declare function LSCopyItemInfoForURL lib CarbonFramework (inURL as Ptr, inWhichInfo as UInt32, ByRef outItemInfo as LSItemInfoRecord) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim record as LSItemInfoRecord</SourceLine>
+   <SourceLine>dim OSStatus as Integer = LSCopyItemInfoForURL(me.CFURLPtr, inWhichInfo, record)</SourceLine>
+   <SourceLine>if OSStatus &lt;&gt; noErr and OSStatus &lt;&gt; fnfErr then</SourceLine>
+   <SourceLine>raise new OSError(OSStatus, "", "CopyItemInfo")</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>return record</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>//LSCopyItemInfoForURL returns error fnfErr if the DiskItem does not exist.</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>inWhichInfo as UInt32</ItemParams>
+  <ItemResult>LSItemInfoRecord</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>TrueChild</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function TrueChild(name as String) As MacOSDiskItem</SourceLine>
+   <SourceLine>return MacOSDiskItem(super.TrueChild(name))</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>name as String</ItemParams>
+  <ItemResult>MacOSDiskItem</ItemResult>
+ </Method>
+ <Note>
+  <ItemName>symlinks</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <NoteLine>symlinks</NoteLine>
+   <NoteLine>Working with symlinks poses a problem, because the Carbon File Manager doesn't really see them.  FSRefs created using</NoteLine>
+   <NoteLine>CFURLGetFSRef point to the linked-to file, not the symlink. Apparently this is a well-known limitation.  Thus we must be especially</NoteLine>
+   <NoteLine>careful when implementing methods that modify FolderItems, like Delete.  The general solution is to switch to POSIX functions</NoteLine>
+   <NoteLine>when operating on symlink files.</NoteLine>
+   <NoteLine></NoteLine>
+  </ItemSource>
+  <ItemFlags>0</ItemFlags>
+ </Note>
  <Property>
   <ItemName>CFURLPtr</ItemName>
   <Compatibility></Compatibility>
@@ -1824,6 +1869,26 @@
   <ItemDef>&amp;h00008000</ItemDef>
   <ItemFlags>33</ItemFlags>
  </Constant>
+ <Constant>
+  <ItemName>kLSItemInfoIsAliasFile</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>kLSItemInfoIsAliasFile</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>&amp;h00000010</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>kLSItemInfoIsSymlink</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>kLSItemInfoIsSymlink</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>&amp;h00000020</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
  <Structure>
   <TextEncoding>134217984</TextEncoding>
   <ItemName>FSRef</ItemName>
@@ -1927,6 +1992,23 @@
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>location as Int32</SourceLine>
    <SourceLine>length as Int32</SourceLine>
+  </ItemSource>
+ </Structure>
+ <Structure>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>LSItemInfoRecord</ItemName>
+  <ItemFlags>0</ItemFlags>
+  <ItemName>LSItemInfoRecord</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>flags as UInt32</SourceLine>
+   <SourceLine>filetype as OSType</SourceLine>
+   <SourceLine>creator as OSType</SourceLine>
+   <SourceLine>extension as Ptr</SourceLine>
+   <SourceLine>iconFileName as Ptr</SourceLine>
+   <SourceLine>LSKindID as UInt32</SourceLine>
   </ItemSource>
  </Structure>
 </block>

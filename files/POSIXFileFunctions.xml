@@ -148,6 +148,144 @@
   <ItemParams>resultCode as Integer, methodName as String</ItemParams>
   <ItemResult></ItemResult>
  </Method>
+ <Method>
+  <ItemName>stat</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub stat(d as DiskItem, ByRef s as statLinux)</SourceLine>
+   <SourceLine>#if targetLinux</SourceLine>
+   <SourceLine>soft declare function xstat lib libc alias "__xstat64" (ver as Int16, path as CString, ByRef s as statLinux) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>const STAT_VER_LINUX = 3</SourceLine>
+   <SourceLine>dim result as Integer = xstat(STAT_VER_LINUX, d.POSIXPath, s)</SourceLine>
+   <SourceLine>if result &lt;&gt; 0 then</SourceLine>
+   <SourceLine>dim errorCode as Integer = libcErrorCode</SourceLine>
+   <SourceLine>dim errorMsg as String = libcErrorMessage(errorCode)</SourceLine>
+   <SourceLine>raise new OSError(errorCode, errorMsg, "stat", "__xstat64")</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>d as DiskItem, ByRef s as statLinux</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>mtime</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function mtime(s as stat64BSD) As Date</SourceLine>
+   <SourceLine>dim mDate as new Date</SourceLine>
+   <SourceLine>const SecondsinOneHour = 3600.0</SourceLine>
+   <SourceLine>dim GMTOffset as Double = mDate.GMTOffset*SecondsinOneHour</SourceLine>
+   <SourceLine>mDate.TotalSeconds = UnixEpoch.TotalSeconds + CType(s.st_mtime.tv_sec, Double) + GMTOffset</SourceLine>
+   <SourceLine>return mDate</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>s as stat64BSD</ItemParams>
+  <ItemResult>Date</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>stat</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub stat(d as DiskItem, ByRef s as stat64BSD)</SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
+   <SourceLine>soft declare function xstat lib libc alias "stat64" ( path as CString, ByRef s as stat64BSD) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim result as Integer = xstat(d.POSIXPath, s)</SourceLine>
+   <SourceLine>if result &lt;&gt; 0 then</SourceLine>
+   <SourceLine>dim errorCode as Integer = libcErrorCode</SourceLine>
+   <SourceLine>dim errorMsg as String = libcErrorMessage(errorCode)</SourceLine>
+   <SourceLine>raise new OSError(errorCode, errorMsg, "stat", "__xstat64")</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>d as DiskItem, ByRef s as stat64BSD</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>UnixEpoch</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function UnixEpoch() As Date</SourceLine>
+   <SourceLine>dim d as new Date</SourceLine>
+   <SourceLine>d.GMTOffset = 0.0</SourceLine>
+   <SourceLine>d.SQLDateTime = "1970-01-01 00:00:00"</SourceLine>
+   <SourceLine>return d</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult>Date</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>mtime</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function mtime(s as statLinux) As Date</SourceLine>
+   <SourceLine>dim mDate as new Date</SourceLine>
+   <SourceLine>const SecondsinOneHour = 3600.0</SourceLine>
+   <SourceLine>dim GMTOffset as Double = mDate.GMTOffset*SecondsinOneHour</SourceLine>
+   <SourceLine>mDate.TotalSeconds = UnixEpoch.TotalSeconds + CType(s.st_mtime.tv_sec, Double) + GMTOffset</SourceLine>
+   <SourceLine>return mDate</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>s as statLinux</ItemParams>
+  <ItemResult>Date</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>GetDate</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function GetDate(unixSeconds as Integer) As Date</SourceLine>
+   <SourceLine>dim d as new Date</SourceLine>
+   <SourceLine>const SecondsinOneHour = 3600.0</SourceLine>
+   <SourceLine>dim GMTOffset as Double = d.GMTOffset*SecondsinOneHour</SourceLine>
+   <SourceLine>d.TotalSeconds = UnixEpoch.TotalSeconds + CType(unixSeconds, Double) + GMTOffset</SourceLine>
+   <SourceLine>return d</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>unixSeconds as Integer</ItemParams>
+  <ItemResult>Date</ItemResult>
+ </Method>
  <ViewBehavior>
   <ViewProperty>
    <ObjName>Name</ObjName>
@@ -223,5 +361,74 @@
   <ItemDef>POSIXFileFunctions</ItemDef>
   <ItemFlags>33</ItemFlags>
  </Constant>
+ <Structure>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>statLinux</ItemName>
+  <ItemFlags>0</ItemFlags>
+  <ItemName>statLinux</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>st_dev as UInt64</SourceLine>
+   <SourceLine>pad1 as UInt32</SourceLine>
+   <SourceLine>st_ino as UInt32</SourceLine>
+   <SourceLine>st_mode as UInt32</SourceLine>
+   <SourceLine>st_nlink as Uint32</SourceLine>
+   <SourceLine>st_uid as UInt32</SourceLine>
+   <SourceLine>st_gid as UInt32</SourceLine>
+   <SourceLine>st_rdev as UInt64</SourceLine>
+   <SourceLine>pad2 as UInt32</SourceLine>
+   <SourceLine>st_size as UInt64</SourceLine>
+   <SourceLine>st_blksize as  UInt32</SourceLine>
+   <SourceLine>st_blocks as UInt64</SourceLine>
+   <SourceLine>st_atime as timespec</SourceLine>
+   <SourceLine>st_mtime as timespec</SourceLine>
+   <SourceLine>st_ctime as timespec</SourceLine>
+   <SourceLine>st_ino64 as Uint64</SourceLine>
+  </ItemSource>
+ </Structure>
+ <Structure>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>timespec</ItemName>
+  <ItemFlags>0</ItemFlags>
+  <ItemName>timespec</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>tv_sec as Int32</SourceLine>
+   <SourceLine>tv_nsec as Int32</SourceLine>
+  </ItemSource>
+ </Structure>
+ <Structure>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>stat64BSD</ItemName>
+  <ItemFlags>0</ItemFlags>
+  <ItemName>stat64BSD</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>st_dev as UInt32</SourceLine>
+   <SourceLine>st_mode as UInt16</SourceLine>
+   <SourceLine>st_nlink as UInt16</SourceLine>
+   <SourceLine>st_ino as UInt64</SourceLine>
+   <SourceLine>st_uid as UInt32</SourceLine>
+   <SourceLine>st_gid as UInt32</SourceLine>
+   <SourceLine>st_rdev as UInt32</SourceLine>
+   <SourceLine>st_atime as timespec</SourceLine>
+   <SourceLine>st_mtime as timespec</SourceLine>
+   <SourceLine>st_ctime as timespec</SourceLine>
+   <SourceLine>st_birthtimespec as timespec</SourceLine>
+   <SourceLine>st_size as Int64</SourceLine>
+   <SourceLine>st_blocks as Int64</SourceLine>
+   <SourceLine>st_blksize as Int32</SourceLine>
+   <SourceLine>st_flags as Uint32</SourceLine>
+   <SourceLine>st_gen as UInt32</SourceLine>
+   <SourceLine>st_lspare as Int32</SourceLine>
+   <SourceLine>st_qspare(1) as Int64</SourceLine>
+  </ItemSource>
+ </Structure>
 </block>
 </RBProject>
