@@ -112,6 +112,60 @@
   <ItemParams>source as DiskItem, target as DiskItem</ItemParams>
   <ItemResult></ItemResult>
  </Method>
+ <Method>
+  <ItemName>libcErrorMessage</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function libcErrorMessage(code as Integer) As String</SourceLine>
+   <SourceLine>#if targetLinux</SourceLine>
+   <SourceLine>soft declare function strerror Lib libc (errcode as Integer)  as Ptr</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim errorMsg as MemoryBlock = strerror(code)</SourceLine>
+   <SourceLine>if errorMsg &lt;&gt; nil then</SourceLine>
+   <SourceLine>return DefineEncoding(errorMsg.CString(0), Encodings.SystemDefault)</SourceLine>
+   <SourceLine>else</SourceLine>
+   <SourceLine>//something bad has happened</SourceLine>
+   <SourceLine>return ""</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>code as Integer</ItemParams>
+  <ItemResult>String</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>libcErrorCode</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function libcErrorCode() As Integer</SourceLine>
+   <SourceLine>#if TargetLinux</SourceLine>
+   <SourceLine>soft declare function libcErrorCode lib libc alias "__errno_location" () as Ptr</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim m as MemoryBlock = libcErrorCode()</SourceLine>
+   <SourceLine>if m is nil then</SourceLine>
+   <SourceLine>//something bad has happened</SourceLine>
+   <SourceLine>return -1</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>return m.Long(0)</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult>Integer</ItemResult>
+ </Method>
  <ViewBehavior>
   <ViewProperty>
    <ObjName>Name</ObjName>
