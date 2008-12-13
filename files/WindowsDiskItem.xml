@@ -8,6 +8,57 @@
  <ItemFlags>1</ItemFlags>
  <IsInterface>0</IsInterface>
  <Compatibility></Compatibility>
+ <Method>
+  <ItemName>CreateFromPOSIXPath</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine> Shared Function CreateFromPOSIXPath(path as String) As DiskItem</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>1</Shared>
+  <ItemParams>path as String</ItemParams>
+  <ItemResult>DiskItem</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>CreateFromSystemPath</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine> Shared Function CreateFromSystemPath(path as String) As DiskItem</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>1</Shared>
+  <ItemParams>path as String</ItemParams>
+  <ItemResult>DiskItem</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>CreateFromURL</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine> Shared Function CreateFromURL(fileURL as String) As MacOSDiskItem</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>1</Shared>
+  <ItemParams>fileURL as String</ItemParams>
+  <ItemResult>MacOSDiskItem</ItemResult>
+ </Method>
  <ViewBehavior>
   <ViewProperty>
    <ObjName>Name</ObjName>
@@ -82,13 +133,6 @@
    <PropertyGroup>Behavior</PropertyGroup>
    <PropertyValue>0</PropertyValue>
    <ItemType>Boolean</ItemType>
-   <InheritsFrom>DiskItem</InheritsFrom>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>LastErrorCode</ObjName>
-   <PropertyGroup>Behavior</PropertyGroup>
-   <PropertyValue>0</PropertyValue>
-   <ItemType>Integer</ItemType>
    <InheritsFrom>DiskItem</InheritsFrom>
   </ViewProperty>
   <ViewProperty>
