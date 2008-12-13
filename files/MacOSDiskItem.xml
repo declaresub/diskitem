@@ -1097,23 +1097,6 @@
   <ItemResult>String</ItemResult>
  </Method>
  <Method>
-  <ItemName>CreateFromFolderItem</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine> Shared Function CreateFromFolderItem(f as FolderItem) As DiskItem</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>End Function</SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <AliasName></AliasName>
-  <ItemFlags>0</ItemFlags>
-  <Shared>1</Shared>
-  <ItemParams>f as FolderItem</ItemParams>
-  <ItemResult>DiskItem</ItemResult>
- </Method>
- <Method>
   <ItemName>Swap</ItemName>
   <Compatibility></Compatibility>
   <Visible>1</Visible>

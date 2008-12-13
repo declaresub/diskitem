@@ -236,6 +236,8 @@
    <SourceLine>end if</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine></SourceLine>
+   <SourceLine>return CreateFromURL(f.URLPath)</SourceLine>
+   <SourceLine></SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>End Function</SourceLine>
   </ItemSource>
