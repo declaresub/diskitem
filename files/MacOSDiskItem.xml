@@ -580,6 +580,33 @@
    <SourceLine>End Function</SourceLine>
   </ItemSource>
  </HookInstance>
+ <HookInstance>
+  <ItemName>GetLength</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function GetLength() As UInt64</SourceLine>
+   <SourceLine>const MethodName = "GetLength"</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
+   <SourceLine>soft declare function CFURLGetFSRef lib CarbonFramework (url as Ptr, ByRef f as FSRef) as Boolean</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim myRef as FSRef</SourceLine>
+   <SourceLine>if CFURLGetFSRef(me.CFURLPtr, myRef) then</SourceLine>
+   <SourceLine>soft declare function FSGetCatalogInfo lib CarbonFramework (ByRef ref as FSRef, whichInfo as UInt32, ByRef catalogInfo as FSCatalogInfo, outName as Ptr, fsSpec as Ptr, parentRef as Ptr) as Int16</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim catalogInfo as FSCatalogInfo</SourceLine>
+   <SourceLine>Attempt FSGetCatalogInfo(myRef, kFSCatInfoDataSizes, catalogInfo, nil, nil, nil), MethodName</SourceLine>
+   <SourceLine>return catalogInfo.dataLogicalSize</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>else</SourceLine>
+   <SourceLine>return 0</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+ </HookInstance>
  <Method>
   <ItemName>FSRef</ItemName>
   <Compatibility></Compatibility>
@@ -1775,6 +1802,26 @@
   <ItemName>nsvErr</ItemName>
   <ItemType>2</ItemType>
   <ItemDef>-35</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>kFSCatInfoDataSizes</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>kFSCatInfoDataSizes</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>&amp;h00004000</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>kFSCatInfoRsrcSizes</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>kFSCatInfoRsrcSizes</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>&amp;h00008000</ItemDef>
   <ItemFlags>33</ItemFlags>
  </Constant>
  <Structure>
