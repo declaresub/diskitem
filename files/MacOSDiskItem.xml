@@ -281,16 +281,16 @@
    <SourceLine>const MaxObjectCount = 256</SourceLine>
    <SourceLine>dim FSRefArray as new MemoryBlock(FSRef.Size*MaxObjectCount)</SourceLine>
    <SourceLine>do</SourceLine>
-   <SourceLine>soft declare function FSGetCatalogInfoBulk lib CarbonFramework (iterator as Ptr, maximumObjects as UInt32, ByRef actualObjects as Uint32, ByRef containerChanged as Boolean, whichInfo as UInt32, catalogInfos as Ptr, refs as Ptr, specs as Ptr, names as Ptr) as Int16</SourceLine>
+   <SourceLine>soft declare function FSGetCatalogInfoBulk lib CarbonFramework (iterator as Ptr, maximumObjects as UInt32, ByRef actualObjects as Integer, ByRef containerChanged as Boolean, whichInfo as UInt32, catalogInfos as Ptr, refs as Ptr, specs as Ptr, names as Ptr) as Int16</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>dim actualObjectCount as UInt32</SourceLine>
+   <SourceLine>dim actualObjectCount as Integer</SourceLine>
    <SourceLine>dim containerChanged as Boolean</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim OSErr as Int16 = FSGetCatalogInfoBulk(theIterator, MaxObjectCount, actualObjectCount, containerChanged, kFSCatInfoNone, nil, FSRefArray, nil, nil)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim FSRefPtr as Ptr = FSRefArray</SourceLine>
    <SourceLine>dim offset as Integer = 0</SourceLine>
-   <SourceLine>for i as UInt32 = 1 to actualObjectCount</SourceLine>
+   <SourceLine>for i as Integer = 1 to actualObjectCount</SourceLine>
    <SourceLine>dim theItem as DiskItem = CreateFromFSRef(FSRefPtr.FSRef(offset))</SourceLine>
    <SourceLine>offset = offset + FSRef.Size</SourceLine>
    <SourceLine>if theItem &lt;&gt; nil then</SourceLine>
@@ -1319,6 +1319,44 @@
   <ItemParams>name1 as String, name2 as String</ItemParams>
   <ItemResult>Boolean</ItemResult>
  </Method>
+ <Method>
+  <ItemName>Unlink</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub Unlink()</SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
+   <SourceLine>if System.IsFunctionAvailable("FSUnlinkObject", CarbonFramework) then //FSUnlinkObject was added in 10.5</SourceLine>
+   <SourceLine>soft declare function FSUnlinkObject lib CarbonFramework (ByRef ref as MacOSDiskItem.FSRef) as Int16</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim ref as FSRef = me.FSRef</SourceLine>
+   <SourceLine>try</SourceLine>
+   <SourceLine>Attempt FSUnlinkObject(ref), "Unlink"</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>catch theError as OSError</SourceLine>
+   <SourceLine>if theError.ErrorNumber = nsvErr then</SourceLine>
+   <SourceLine>//file does not exist; we ignore this error.  I'm a little surprised that it doesn't return fnfErr, but perhaps that's because</SourceLine>
+   <SourceLine>//the FSRef returned for a nonexistent file is zeroed-out.</SourceLine>
+   <SourceLine>else</SourceLine>
+   <SourceLine>raise theError</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>end try</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>else</SourceLine>
+   <SourceLine>//fall back to POSIX function</SourceLine>
+   <SourceLine>unlink me</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
  <Property>
   <ItemName>CFURLPtr</ItemName>
   <Compatibility></Compatibility>
@@ -1650,16 +1688,6 @@
   <ItemFlags>33</ItemFlags>
  </Constant>
  <Constant>
-  <ItemName>nsvErr</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <TextEncoding>134217984</TextEncoding>
-  <ItemName>nsvErr</ItemName>
-  <ItemType>2</ItemType>
-  <ItemDef>-35</ItemDef>
-  <ItemFlags>33</ItemFlags>
- </Constant>
- <Constant>
   <ItemName>dupFNErr</ItemName>
   <Compatibility></Compatibility>
   <Visible>1</Visible>
@@ -1737,6 +1765,16 @@
   <ItemName>bIsCasePreserving</ItemName>
   <ItemType>2</ItemType>
   <ItemDef>23</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>nsvErr</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>nsvErr</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>-35</ItemDef>
   <ItemFlags>33</ItemFlags>
  </Constant>
  <Structure>

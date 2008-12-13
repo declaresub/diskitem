@@ -14,39 +14,10 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Sub unlink(d as DiskItem)</SourceLine>
-   <SourceLine>#if targetMacOS</SourceLine>
-   <SourceLine>if System.IsFunctionAvailable("FSUnlinkObject", CarbonFramework) then</SourceLine>
-   <SourceLine>soft declare function FSUnlinkObject lib CarbonFramework (ByRef ref as MacOSDiskItem.FSRef) as Int16</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>dim ref as MacOSDiskItem.FSRef = MacOSDiskItem(d).FSRef</SourceLine>
-   <SourceLine>dim OSErr as Int16 = FSUnlinkObject(ref)</SourceLine>
-   <SourceLine>if OSErr &lt;&gt; 0 then</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>end if</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>else</SourceLine>
-   <SourceLine></SourceLine>
+   <SourceLine>#if targetLinux or targetMacOS</SourceLine>
    <SourceLine>soft declare function unlink lib libc (path as CString) as Integer</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>dim result as Integer = unlink(d.POSIXPath)</SourceLine>
-   <SourceLine>if result &lt;&gt; 0 then</SourceLine>
-   <SourceLine>//raise exception</SourceLine>
-   <SourceLine>'dim errorCode as Integer = libc.ErrorCode</SourceLine>
-   <SourceLine>'dim errorMsg as String = libc.ErrorMessage(errorCode)</SourceLine>
-   <SourceLine>break</SourceLine>
-   <SourceLine>end if</SourceLine>
-   <SourceLine>end if</SourceLine>
-   <SourceLine>#endif</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>#if targetLinux</SourceLine>
-   <SourceLine>soft declare function unlink lib libc (path as CString) as Integer</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>dim result as Integer = unlink(d.POSIXPath)</SourceLine>
-   <SourceLine>if result &lt;&gt; 0 then</SourceLine>
-   <SourceLine>dim errorCode as Integer = libcErrorCode</SourceLine>
-   <SourceLine>dim errorMsg as String = libcErrorMessage(errorCode)</SourceLine>
-   <SourceLine>raise new OSError(errorCode, errorMsg, "unlink", "unlink")</SourceLine>
-   <SourceLine>end if</SourceLine>
+   <SourceLine>Attempt unlink(d.POSIXPath), "unlink"</SourceLine>
    <SourceLine>#endif</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine></SourceLine>
@@ -66,16 +37,10 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Sub symlink(source as DiskItem, target as DiskItem)</SourceLine>
-   <SourceLine>#if targetLinux</SourceLine>
-   <SourceLine></SourceLine>
+   <SourceLine>#if targetLinux or targetMacOS</SourceLine>
    <SourceLine>soft declare function symlink lib libc (path1 as CString, path2 as CString) as Integer</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>dim result as Integer = symlink(source.POSIXPath, target.POSIXPath)</SourceLine>
-   <SourceLine>if result &lt;&gt; 0 then</SourceLine>
-   <SourceLine>dim errorCode as Integer = libcErrorCode</SourceLine>
-   <SourceLine>dim errorMsg as String = libcErrorMessage(errorCode)</SourceLine>
-   <SourceLine>break</SourceLine>
-   <SourceLine>end if</SourceLine>
+   <SourceLine>Attempt symlink(source.POSIXPath, target.POSIXPath), "symlink"</SourceLine>
    <SourceLine>#endif</SourceLine>
    <SourceLine>End Sub</SourceLine>
   </ItemSource>
@@ -93,15 +58,10 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Sub link(source as DiskItem, target as DiskItem)</SourceLine>
-   <SourceLine>#if targetLinux</SourceLine>
+   <SourceLine>#if targetLinux or targetMacOS</SourceLine>
    <SourceLine>soft declare function link lib libc (path1 as CString, path2 as CString) as Integer</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>dim result as Integer = link(source.POSIXPath, target.POSIXPath)</SourceLine>
-   <SourceLine>if result &lt;&gt; 0 then</SourceLine>
-   <SourceLine>dim errorCode as Integer = libcErrorCode</SourceLine>
-   <SourceLine>dim errorMsg as String = libcErrorMessage(errorCode)</SourceLine>
-   <SourceLine>break</SourceLine>
-   <SourceLine>end if</SourceLine>
+   <SourceLine>Attempt link(source.POSIXPath, target.POSIXPath), "link"</SourceLine>
    <SourceLine>#endif</SourceLine>
    <SourceLine>End Sub</SourceLine>
   </ItemSource>
@@ -166,6 +126,28 @@
   <ItemParams></ItemParams>
   <ItemResult>Integer</ItemResult>
  </Method>
+ <Method>
+  <ItemName>Attempt</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub Attempt(resultCode as Integer, methodName as String)</SourceLine>
+   <SourceLine>if resultCode &lt;&gt; 0 then</SourceLine>
+   <SourceLine>dim errorCode as Integer = libcErrorCode</SourceLine>
+   <SourceLine>dim errorMsg as String = libcErrorMessage(errorCode)</SourceLine>
+   <SourceLine>raise new OSError(errorCode, "", ClassName + "." + methodName, "")</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>resultCode as Integer, methodName as String</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
  <ViewBehavior>
   <ViewProperty>
    <ObjName>Name</ObjName>
@@ -229,6 +211,16 @@
   <ItemName>CarbonFramework</ItemName>
   <ItemType>0</ItemType>
   <ItemDef>Carbon.framework</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>ClassName</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>ClassName</ItemName>
+  <ItemType>0</ItemType>
+  <ItemDef>POSIXFileFunctions</ItemDef>
   <ItemFlags>33</ItemFlags>
  </Constant>
 </block>
