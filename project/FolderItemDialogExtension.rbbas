@@ -1,0 +1,1 @@
+#tag ModuleProtected Module FolderItemDialogExtension	#tag Method, Flags = &h0		Function Selection(extends dlg as OpenDialog) As DiskItem		  return DiskItem.CreateFromFolderItem(dlg.Result)		End Function	#tag EndMethodEnd Module#tag EndModule
