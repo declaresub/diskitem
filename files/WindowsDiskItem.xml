@@ -15,59 +15,59 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Function GetTrueItems() As DiskItem()</SourceLine>
-   <SourceLine>//Code grabbed from http://forums.realsoftware.com/viewtopic.php?f=1&amp;t=13692&amp;st=0&amp;sk=t&amp;sd=a&amp;hilit=folderItem+aaron&amp;start=15</SourceLine>
-   <SourceLine>//it's not clear to me whether this code returns Items or TrueItems.  Also, no length-checking is performed on the absolute path.  I don't know whether FindFirstFile* returns an error for overlong paths or simply allows a buffer overrun. </SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>// Return all of the files within a folder in the quickest way possible</SourceLine>
-   <SourceLine>Soft Declare Function FindFirstFileA Lib "Kernel32" ( path as CString, data as Ptr ) as Integer</SourceLine>
-   <SourceLine>Soft Declare Function FindFirstFileW Lib "Kernel32" ( path as WString, data as Ptr ) as Integer</SourceLine>
-   <SourceLine>Soft Declare Function FindNextFileA Lib "Kernel32" ( handle as Integer, data as Ptr ) as Boolean</SourceLine>
-   <SourceLine>Soft Declare Function FindNextFileW Lib "Kernel32" ( handle as Integer, data as Ptr ) as Boolean</SourceLine>
-   <SourceLine>Declare Sub FindClose Lib "Kernel32" ( handle as Integer )</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>dim ret( -1 ) as FolderItem</SourceLine>
-   <SourceLine>dim handle as Integer</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>// Sanity check</SourceLine>
-   <SourceLine>if not f.Directory then return ret</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>dim data as MemoryBlock</SourceLine>
-   <SourceLine>if System.IsFunctionAvailable( "FindFirstFileW", "Kernel32" ) then</SourceLine>
-   <SourceLine>data = new MemoryBlock( 592 )</SourceLine>
-   <SourceLine>handle = FindFirstFileW( f.AbsolutePath + "*.*", data )</SourceLine>
-   <SourceLine>else</SourceLine>
-   <SourceLine>data = new MemoryBlock( 318 )</SourceLine>
-   <SourceLine>handle = FindFirstFileA( f.AbsolutePath + "*.*", data )</SourceLine>
-   <SourceLine>end if</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>if handle &lt;&gt; -1 then</SourceLine>
-   <SourceLine>// Loop over all of the items in using the handle and the find data</SourceLine>
-   <SourceLine>dim done as Boolean</SourceLine>
-   <SourceLine>do</SourceLine>
-   <SourceLine>// Add the current item</SourceLine>
-   <SourceLine>dim temp as FolderItem</SourceLine>
-   <SourceLine>if System.IsFunctionAvailable( "FindFirstFileW", "Kernel32" ) then</SourceLine>
-   <SourceLine>temp = new FolderItem( data.WString( 44 ), FolderItem.PathTypeAbsolute )</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>// Loop to the next item</SourceLine>
-   <SourceLine>done = FindNextFileW( handle, data )</SourceLine>
-   <SourceLine>else</SourceLine>
-   <SourceLine>temp = new FolderItem( data.CString( 44 ), FolderItem.PathTypeAbsolute )</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>// Loop to the next item</SourceLine>
-   <SourceLine>done = FindNextFileA( handle, data )</SourceLine>
-   <SourceLine>end if</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>// Add the current item to our list</SourceLine>
-   <SourceLine>ret.Append( temp )</SourceLine>
-   <SourceLine>loop until not done</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>FindClose( handle )</SourceLine>
-   <SourceLine>end if</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>return ret</SourceLine>
+   <SourceLine>'//Code grabbed from http://forums.realsoftware.com/viewtopic.php?f=1&amp;t=13692&amp;st=0&amp;sk=t&amp;sd=a&amp;hilit=folderItem+aaron&amp;start=15</SourceLine>
+   <SourceLine>'//it's not clear to me whether this code returns Items or TrueItems.  Also, no length-checking is performed on the absolute path.  I don't know whether FindFirstFile* returns an error for overlong paths or simply allows a buffer overrun. </SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'// Return all of the files within a folder in the quickest way possible</SourceLine>
+   <SourceLine>'Soft Declare Function FindFirstFileA Lib "Kernel32" ( path as CString, data as Ptr ) as Integer</SourceLine>
+   <SourceLine>'Soft Declare Function FindFirstFileW Lib "Kernel32" ( path as WString, data as Ptr ) as Integer</SourceLine>
+   <SourceLine>'Soft Declare Function FindNextFileA Lib "Kernel32" ( handle as Integer, data as Ptr ) as Boolean</SourceLine>
+   <SourceLine>'Soft Declare Function FindNextFileW Lib "Kernel32" ( handle as Integer, data as Ptr ) as Boolean</SourceLine>
+   <SourceLine>'Declare Sub FindClose Lib "Kernel32" ( handle as Integer )</SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'dim ret( -1 ) as FolderItem</SourceLine>
+   <SourceLine>'dim handle as Integer</SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'// Sanity check</SourceLine>
+   <SourceLine>'if not me.Directory then return ret</SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'dim data as MemoryBlock</SourceLine>
+   <SourceLine>'if System.IsFunctionAvailable( "FindFirstFileW", "Kernel32" ) then</SourceLine>
+   <SourceLine>'data = new MemoryBlock( 592 )</SourceLine>
+   <SourceLine>'handle = FindFirstFileW( f.AbsolutePath + "*.*", data )</SourceLine>
+   <SourceLine>'else</SourceLine>
+   <SourceLine>'data = new MemoryBlock( 318 )</SourceLine>
+   <SourceLine>'handle = FindFirstFileA( f.AbsolutePath + "*.*", data )</SourceLine>
+   <SourceLine>'end if</SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'if handle &lt;&gt; -1 then</SourceLine>
+   <SourceLine>'// Loop over all of the items in using the handle and the find data</SourceLine>
+   <SourceLine>'dim done as Boolean</SourceLine>
+   <SourceLine>'do</SourceLine>
+   <SourceLine>'// Add the current item</SourceLine>
+   <SourceLine>'dim temp as FolderItem</SourceLine>
+   <SourceLine>'if System.IsFunctionAvailable( "FindFirstFileW", "Kernel32" ) then</SourceLine>
+   <SourceLine>'temp = new FolderItem( data.WString( 44 ), FolderItem.PathTypeAbsolute )</SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'// Loop to the next item</SourceLine>
+   <SourceLine>'done = FindNextFileW( handle, data )</SourceLine>
+   <SourceLine>'else</SourceLine>
+   <SourceLine>'temp = new FolderItem( data.CString( 44 ), FolderItem.PathTypeAbsolute )</SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'// Loop to the next item</SourceLine>
+   <SourceLine>'done = FindNextFileA( handle, data )</SourceLine>
+   <SourceLine>'end if</SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'// Add the current item to our list</SourceLine>
+   <SourceLine>'ret.Append( temp )</SourceLine>
+   <SourceLine>'loop until not done</SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'FindClose( handle )</SourceLine>
+   <SourceLine>'end if</SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'return ret</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>End Function</SourceLine>
