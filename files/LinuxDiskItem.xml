@@ -50,12 +50,12 @@
   </ItemSource>
  </HookInstance>
  <Method>
-  <ItemName>CreateFromSlashPath</ItemName>
+  <ItemName>CreateFromPOSIXPath</ItemName>
   <Compatibility></Compatibility>
   <Visible>1</Visible>
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
-   <SourceLine> Shared Function CreateFromSlashPath(path as String) As DiskItem</SourceLine>
+   <SourceLine> Shared Function CreateFromPOSIXPath(path as String) As DiskItem</SourceLine>
    <SourceLine>dim d as new LinuxDiskItem</SourceLine>
    <SourceLine>d.Path = path</SourceLine>
    <SourceLine>return d</SourceLine>
@@ -251,6 +251,43 @@
   <ItemParams></ItemParams>
   <ItemResult>Date</ItemResult>
  </Method>
+ <Method>
+  <ItemName>CreateFromSystemPath</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine> Shared Function CreateFromSystemPath(path as String) As DiskItem</SourceLine>
+   <SourceLine>#if targetLinux</SourceLine>
+   <SourceLine>return LinuxDiskItem.CreateFromPOSIXPathPath(path)</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>1</Shared>
+  <ItemParams>path as String</ItemParams>
+  <ItemResult>DiskItem</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>CreateFromURL</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine> Shared Function CreateFromURL(fileURL as String) As MacOSDiskItem</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>1</Shared>
+  <ItemParams>fileURL as String</ItemParams>
+  <ItemResult>MacOSDiskItem</ItemResult>
+ </Method>
  <Property>
   <ItemName>Path</ItemName>
   <Compatibility></Compatibility>
@@ -346,13 +383,6 @@
    <PropertyGroup>Behavior</PropertyGroup>
    <PropertyValue>0</PropertyValue>
    <ItemType>Boolean</ItemType>
-   <InheritsFrom>DiskItem</InheritsFrom>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>LastErrorCode</ObjName>
-   <PropertyGroup>Behavior</PropertyGroup>
-   <PropertyValue>0</PropertyValue>
-   <ItemType>Integer</ItemType>
    <InheritsFrom>DiskItem</InheritsFrom>
   </ViewProperty>
   <ViewProperty>
