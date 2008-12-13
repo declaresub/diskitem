@@ -308,15 +308,15 @@
    <SourceLine>end if</SourceLine>
    <SourceLine>loop</SourceLine>
    <SourceLine></SourceLine>
+   <SourceLine>#endif</SourceLine>
    <SourceLine></SourceLine>
+   <SourceLine>finally</SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
    <SourceLine>soft declare function FSCloseIterator lib CarbonFramework (iterator as Ptr) as Int16</SourceLine>
    <SourceLine>dim err as Int16 = FSCloseIterator(theIterator)</SourceLine>
    <SourceLine>theIterator = nil</SourceLine>
-   <SourceLine></SourceLine>
    <SourceLine>return theList</SourceLine>
    <SourceLine>#endif</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine></SourceLine>
    <SourceLine></SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>End Function</SourceLine>
@@ -1391,13 +1391,6 @@
  </Property>
  <ViewBehavior>
   <ViewProperty>
-   <ObjName>Alias</ObjName>
-   <PropertyGroup>Behavior</PropertyGroup>
-   <PropertyValue>0</PropertyValue>
-   <ItemType>Boolean</ItemType>
-   <InheritsFrom>DiskItem</InheritsFrom>
-  </ViewProperty>
-  <ViewProperty>
    <ObjName>Exists</ObjName>
    <PropertyGroup>Behavior</PropertyGroup>
    <PropertyValue>0</PropertyValue>
@@ -1408,6 +1401,7 @@
    <ObjName>URLPath</ObjName>
    <PropertyGroup>Behavior</PropertyGroup>
    <ItemType>String</ItemType>
+   <EditorType>MultiLineEditor</EditorType>
    <InheritsFrom>DiskItem</InheritsFrom>
   </ViewProperty>
   <ViewProperty>
@@ -1421,12 +1415,14 @@
    <ObjName>POSIXPath</ObjName>
    <PropertyGroup>Behavior</PropertyGroup>
    <ItemType>String</ItemType>
+   <EditorType>MultiLineEditor</EditorType>
    <InheritsFrom>DiskItem</InheritsFrom>
   </ViewProperty>
   <ViewProperty>
    <ObjName>AbsolutePath</ObjName>
    <PropertyGroup>Behavior</PropertyGroup>
    <ItemType>String</ItemType>
+   <EditorType>MultiLineEditor</EditorType>
    <InheritsFrom>DiskItem</InheritsFrom>
   </ViewProperty>
   <ViewProperty>
@@ -1441,6 +1437,13 @@
    <PropertyGroup>Behavior</PropertyGroup>
    <PropertyValue>0</PropertyValue>
    <ItemType>Integer</ItemType>
+   <InheritsFrom>DiskItem</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Alias</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Boolean</ItemType>
    <InheritsFrom>DiskItem</InheritsFrom>
   </ViewProperty>
   <ViewProperty>
