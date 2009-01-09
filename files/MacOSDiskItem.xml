@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<RBProject version="2008r4.1">
+<RBProject version="2008r5.1">
 <block type="Module" ID="81271890">
  <ObjName>MacOSDiskItem</ObjName>
  <ObjContainerID>1044228147</ObjContainerID>
@@ -1483,6 +1483,13 @@
   </GetAccessor>
  </Property>
  <ViewBehavior>
+  <ViewProperty>
+   <ObjName>Symlink</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Boolean</ItemType>
+   <InheritsFrom>DiskItem</InheritsFrom>
+  </ViewProperty>
   <ViewProperty>
    <ObjName>Exists</ObjName>
    <PropertyGroup>Behavior</PropertyGroup>

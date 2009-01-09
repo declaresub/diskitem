@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<RBProject version="2008r4.1">
+<RBProject version="2008r5.1">
 <block type="Module" ID="1880945459">
  <ObjName>POSIXFileFunctions</ObjName>
  <ObjContainerID>1044228147</ObjContainerID>
@@ -284,6 +284,30 @@
   <ItemFlags>0</ItemFlags>
   <Shared>0</Shared>
   <ItemParams>unixSeconds as Integer</ItemParams>
+  <ItemResult>Date</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>mtime</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function mtime(f as DiskItem) As Date</SourceLine>
+   <SourceLine>#if targetMacOS</SourceLine>
+   <SourceLine>dim s as stat64BSD</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine>#if targetLinux</SourceLine>
+   <SourceLine>dim s as statLinux</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine>stat f, s</SourceLine>
+   <SourceLine>return mtime(s)</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>f as DiskItem</ItemParams>
   <ItemResult>Date</ItemResult>
  </Method>
  <ViewBehavior>
