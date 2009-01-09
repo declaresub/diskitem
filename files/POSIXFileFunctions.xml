@@ -323,6 +323,40 @@
   <ItemParams>t as timespec</ItemParams>
   <ItemResult>Date</ItemResult>
  </Method>
+ <Method>
+  <ItemName>atime</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function atime(s as stat64BSD) As Date</SourceLine>
+   <SourceLine>return MakeDate(s.st_atime)</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>s as stat64BSD</ItemParams>
+  <ItemResult>Date</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>atime</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function atime(s as statLinux) As Date</SourceLine>
+   <SourceLine>return MakeDate(s.st_atime)</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>s as statLinux</ItemParams>
+  <ItemResult>Date</ItemResult>
+ </Method>
  <ViewBehavior>
   <ViewProperty>
    <ObjName>Name</ObjName>
