@@ -183,11 +183,7 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Function mtime(s as stat64BSD) As Date</SourceLine>
-   <SourceLine>dim mDate as new Date</SourceLine>
-   <SourceLine>const SecondsinOneHour = 3600.0</SourceLine>
-   <SourceLine>dim GMTOffset as Double = mDate.GMTOffset*SecondsinOneHour</SourceLine>
-   <SourceLine>mDate.TotalSeconds = UnixEpoch.TotalSeconds + CType(s.st_mtime.tv_sec, Double) + GMTOffset</SourceLine>
-   <SourceLine>return mDate</SourceLine>
+   <SourceLine>return MakeDate(s.st_mtime)</SourceLine>
    <SourceLine>End Function</SourceLine>
   </ItemSource>
   <TextEncoding>134217984</TextEncoding>
@@ -251,11 +247,7 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Function mtime(s as statLinux) As Date</SourceLine>
-   <SourceLine>dim mDate as new Date</SourceLine>
-   <SourceLine>const SecondsinOneHour = 3600.0</SourceLine>
-   <SourceLine>dim GMTOffset as Double = mDate.GMTOffset*SecondsinOneHour</SourceLine>
-   <SourceLine>mDate.TotalSeconds = UnixEpoch.TotalSeconds + CType(s.st_mtime.tv_sec, Double) + GMTOffset</SourceLine>
-   <SourceLine>return mDate</SourceLine>
+   <SourceLine>return MakeDate(s.st_mtime)</SourceLine>
    <SourceLine>End Function</SourceLine>
   </ItemSource>
   <TextEncoding>134217984</TextEncoding>
@@ -308,6 +300,27 @@
   <ItemFlags>0</ItemFlags>
   <Shared>0</Shared>
   <ItemParams>f as DiskItem</ItemParams>
+  <ItemResult>Date</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>MakeDate</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function MakeDate(t as timespec) As Date</SourceLine>
+   <SourceLine>dim d as new Date</SourceLine>
+   <SourceLine>const SecondsinOneHour = 3600.0</SourceLine>
+   <SourceLine>dim GMTOffset as Double = d.GMTOffset*SecondsinOneHour</SourceLine>
+   <SourceLine>d.TotalSeconds = UnixEpoch.TotalSeconds + CType(t.tv_sec, Double) + GMTOffset</SourceLine>
+   <SourceLine>return d</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>t as timespec</ItemParams>
   <ItemResult>Date</ItemResult>
  </Method>
  <ViewBehavior>
