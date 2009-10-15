@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<RBProject version="2008r5.1">
+<RBProject version="2009r4">
 <block type="Module" ID="81271890">
  <ObjName>MacOSDiskItem</ObjName>
  <ObjContainerID>1044228147</ObjContainerID>
@@ -441,11 +441,16 @@
    <SourceLine></SourceLine>
    <SourceLine>dim myRef as FSRef</SourceLine>
    <SourceLine>if CFURLGetFSRef(me.CFURLPtr, myRef) then</SourceLine>
-   <SourceLine>soft declare function FSGetCatalogInfo lib CarbonFramework (ByRef ref as FSRef, whichInfo as UInt32, catalogInfo as Ptr, outName as Ptr, fsSpec as Ptr, ByRef parentRef as FSRef) as Int16</SourceLine>
+   <SourceLine>soft declare function FSGetCatalogInfo lib CarbonFramework (ByRef ref as FSRef, whichInfo as UInt32, ByRef catalogInfo as FSCatalogInfo, outName as Ptr, fsSpec as Ptr, ByRef parentRef as FSRef) as Int16</SourceLine>
    <SourceLine></SourceLine>
+   <SourceLine>dim catalogInfo as FSCatalogInfo</SourceLine>
    <SourceLine>dim parentRef as FSRef</SourceLine>
-   <SourceLine>Attempt FSGetCatalogInfo(myRef, kFSCatInfoNone, nil, nil, nil, parentRef), MethodName</SourceLine>
+   <SourceLine>Attempt FSGetCatalogInfo(myRef, kFSCatInfoParentDirID, catalogInfo, nil, nil, parentRef), MethodName</SourceLine>
+   <SourceLine>if catalogInfo.parentDirID &lt;&gt; fsRtParID then</SourceLine>
    <SourceLine>return CreateFromFSRef(parentRef)</SourceLine>
+   <SourceLine>else</SourceLine>
+   <SourceLine>return nil</SourceLine>
+   <SourceLine>end if</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>else</SourceLine>
    <SourceLine>soft declare function CFURLCreateCopyDeletingLastPathComponent lib CarbonFramework (allocator as Ptr, url as Ptr) as Ptr</SourceLine>
@@ -611,6 +616,35 @@
    <SourceLine>dim record as LSItemInfoRecord = me.CopyItemInfo(kLSRequestBasicFlagsOnly)</SourceLine>
    <SourceLine>return (record.flags and kLSItemInfoIsSymlink) = kLSItemInfoIsSymlink</SourceLine>
    <SourceLine>#endif</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+ </HookInstance>
+ <HookInstance>
+  <ItemName>ConvertToFolderItem</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function ConvertToFolderItem() As FolderItem</SourceLine>
+   <SourceLine>if me.Parent is nil then</SourceLine>
+   <SourceLine>dim my_volrefnum as Integer = me.VolRefNum</SourceLine>
+   <SourceLine>dim f as FolderItem = nil</SourceLine>
+   <SourceLine>for i as Integer = 0 to VolumeCount - 1</SourceLine>
+   <SourceLine>dim v as FolderItem = Volume(i)</SourceLine>
+   <SourceLine>if v is nil then</SourceLine>
+   <SourceLine>continue</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>if v.MacVRefNum = my_volrefnum then</SourceLine>
+   <SourceLine>f = v</SourceLine>
+   <SourceLine>exit</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>next</SourceLine>
+   <SourceLine>return f</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>else</SourceLine>
+   <SourceLine>dim f as FolderItem = me.Parent</SourceLine>
+   <SourceLine>return f.TrueChild(me.Name)</SourceLine>
+   <SourceLine>end if</SourceLine>
    <SourceLine>End Function</SourceLine>
   </ItemSource>
  </HookInstance>
@@ -1049,6 +1083,7 @@
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Shared Function IsLeopard() As Boolean</SourceLine>
    <SourceLine>static theAnswer as Boolean = (ReadSystemVersion &gt;= "10.5")</SourceLine>
+   <SourceLine>return theAnswer</SourceLine>
    <SourceLine>End Function</SourceLine>
   </ItemSource>
   <TextEncoding>134217984</TextEncoding>
@@ -1470,13 +1505,13 @@
    <SourceLine>#if targetMacOS</SourceLine>
    <SourceLine>soft declare function CFURLGetFSRef lib CarbonFramework (url as Ptr, ByRef f as FSRef) as Boolean</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>dim parentRef as FSRef = me.Parent.FSRef</SourceLine>
+   <SourceLine>dim ref as FSRef = me.FSRef</SourceLine>
    <SourceLineBreakpoint>6</SourceLineBreakpoint>
    <SourceLine></SourceLine>
    <SourceLine>soft declare function FSGetCatalogInfo lib CarbonFramework (ByRef ref as FSRef, whichInfo as UInt32, ByRef catalogInfo as FSCatalogInfo, outName as Ptr, fsSpec as Ptr, parentRef as Ptr) as Int16</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim catalogInfo as FSCatalogInfo</SourceLine>
-   <SourceLine>Attempt FSGetCatalogInfo(parentRef, kFSCatInfoVolume, catalogInfo, nil, nil, nil), MethodName</SourceLine>
+   <SourceLine>Attempt FSGetCatalogInfo(ref, kFSCatInfoVolume, catalogInfo, nil, nil, nil), MethodName</SourceLine>
    <SourceLine>return catalogInfo.volume</SourceLine>
    <SourceLine>#endif</SourceLine>
    <SourceLine>End Get</SourceLine>
@@ -1894,6 +1929,16 @@
   <ItemName>kLSItemInfoIsSymlink</ItemName>
   <ItemType>2</ItemType>
   <ItemDef>&amp;h00000020</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>fsRtParID</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>fsRtParID</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>1</ItemDef>
   <ItemFlags>33</ItemFlags>
  </Constant>
  <Structure>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<RBProject version="2008r4.1">
+<RBProject version="2009r4">
 <block type="Module" ID="343331339">
  <ObjName>DiskItem</ObjName>
  <ObjContainerID>1044228147</ObjContainerID>
@@ -305,6 +305,23 @@
   <ItemParams>path as String</ItemParams>
   <ItemResult>DiskItem</ItemResult>
  </Method>
+ <Method>
+  <ItemName>Operator_Convert</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function Operator_Convert() As FolderItem</SourceLine>
+   <SourceLine>return raiseEvent ConvertToFolderItem</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult>FolderItem</ItemResult>
+ </Method>
  <Hook>
   <ItemName>GetName</ItemName>
   <TextEncoding>134217984</TextEncoding>
@@ -488,6 +505,14 @@
   <SystemFlags>0</SystemFlags>
   <ItemParams></ItemParams>
   <ItemResult>Boolean</ItemResult>
+ </Hook>
+ <Hook>
+  <ItemName>ConvertToFolderItem</ItemName>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemFlags>33</ItemFlags>
+  <SystemFlags>0</SystemFlags>
+  <ItemParams></ItemParams>
+  <ItemResult>FolderItem</ItemResult>
  </Hook>
  <Property>
   <ItemName>Name</ItemName>
@@ -821,7 +846,7 @@
   <Visible>1</Visible>
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Property Symlink As Boolean</SourceLine>
+   <SourceLine>Symlink As Boolean</SourceLine>
    <SourceLine></SourceLine>
   </ItemSource>
   <TextEncoding>134217984</TextEncoding>
@@ -921,6 +946,11 @@
    <ObjName>Alias</ObjName>
    <PropertyGroup>Behavior</PropertyGroup>
    <PropertyValue>0</PropertyValue>
+   <ItemType>Boolean</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Symlink</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
    <ItemType>Boolean</ItemType>
   </ViewProperty>
  </ViewBehavior>
