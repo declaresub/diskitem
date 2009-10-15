@@ -1503,84 +1503,25 @@
    <SourceLine>const MethodName = "GetVolRefNum"</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>#if targetMacOS</SourceLine>
+   <SourceLine>if me.Exists then</SourceLine>
    <SourceLine>soft declare function CFURLGetFSRef lib CarbonFramework (url as Ptr, ByRef f as FSRef) as Boolean</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim ref as FSRef = me.FSRef</SourceLine>
-   <SourceLineBreakpoint>6</SourceLineBreakpoint>
    <SourceLine></SourceLine>
    <SourceLine>soft declare function FSGetCatalogInfo lib CarbonFramework (ByRef ref as FSRef, whichInfo as UInt32, ByRef catalogInfo as FSCatalogInfo, outName as Ptr, fsSpec as Ptr, parentRef as Ptr) as Int16</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>dim catalogInfo as FSCatalogInfo</SourceLine>
    <SourceLine>Attempt FSGetCatalogInfo(ref, kFSCatInfoVolume, catalogInfo, nil, nil, nil), MethodName</SourceLine>
    <SourceLine>return catalogInfo.volume</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>else</SourceLine>
+   <SourceLine>return me.Parent.VolRefNum</SourceLine>
+   <SourceLine>end if</SourceLine>
    <SourceLine>#endif</SourceLine>
    <SourceLine>End Get</SourceLine>
   </GetAccessor>
  </Property>
  <ViewBehavior>
-  <ViewProperty>
-   <ObjName>Symlink</ObjName>
-   <PropertyGroup>Behavior</PropertyGroup>
-   <PropertyValue>0</PropertyValue>
-   <ItemType>Boolean</ItemType>
-   <InheritsFrom>DiskItem</InheritsFrom>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>Exists</ObjName>
-   <PropertyGroup>Behavior</PropertyGroup>
-   <PropertyValue>0</PropertyValue>
-   <ItemType>Boolean</ItemType>
-   <InheritsFrom>DiskItem</InheritsFrom>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>URLPath</ObjName>
-   <PropertyGroup>Behavior</PropertyGroup>
-   <ItemType>String</ItemType>
-   <EditorType>MultiLineEditor</EditorType>
-   <InheritsFrom>DiskItem</InheritsFrom>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>Directory</ObjName>
-   <PropertyGroup>Behavior</PropertyGroup>
-   <PropertyValue>0</PropertyValue>
-   <ItemType>Boolean</ItemType>
-   <InheritsFrom>DiskItem</InheritsFrom>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>POSIXPath</ObjName>
-   <PropertyGroup>Behavior</PropertyGroup>
-   <ItemType>String</ItemType>
-   <EditorType>MultiLineEditor</EditorType>
-   <InheritsFrom>DiskItem</InheritsFrom>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>AbsolutePath</ObjName>
-   <PropertyGroup>Behavior</PropertyGroup>
-   <ItemType>String</ItemType>
-   <EditorType>MultiLineEditor</EditorType>
-   <InheritsFrom>DiskItem</InheritsFrom>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>Visible</ObjName>
-   <PropertyGroup>Behavior</PropertyGroup>
-   <PropertyValue>0</PropertyValue>
-   <ItemType>Boolean</ItemType>
-   <InheritsFrom>DiskItem</InheritsFrom>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>Count</ObjName>
-   <PropertyGroup>Behavior</PropertyGroup>
-   <PropertyValue>0</PropertyValue>
-   <ItemType>Integer</ItemType>
-   <InheritsFrom>DiskItem</InheritsFrom>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>Alias</ObjName>
-   <PropertyGroup>Behavior</PropertyGroup>
-   <PropertyValue>0</PropertyValue>
-   <ItemType>Boolean</ItemType>
-   <InheritsFrom>DiskItem</InheritsFrom>
-  </ViewProperty>
   <ViewProperty>
    <ObjName>Name</ObjName>
    <Visible>1</Visible>
